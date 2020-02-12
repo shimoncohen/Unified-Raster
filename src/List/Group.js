@@ -2,6 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import Item from './ItemContainer';
 import { Droppable } from 'react-beautiful-dnd';
+import {
+    ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Checkbox, FormControlLabel,
+    Typography
+} from '@material-ui/core/';
+import { ExpandMore } from '@material-ui/icons/';
 
 const Container = styled.div`
 margin:8px;
@@ -17,9 +22,22 @@ padding: 8px;
 
 export default function Group(props) {
     return (
-        <Container>
-            <Title>{props.group.title}</Title>
-            {/* wrap the drop area, provided adds props and ref that react-beautiful-dnd needs */}
+        <ExpansionPanel>
+            <ExpansionPanelSummary
+                expandIcon={<ExpandMore />}
+                aria-label="Expand"
+                aria-controls="group-content"
+                id={props.group.id + '-expansion-panel-summary'}
+            >
+                <FormControlLabel
+                    aria-label="group-details"
+                    onClick={event => event.stopPropagation()}
+                    onFocus={event => event.stopPropagation()}
+                    control={<Checkbox checked={true} />}
+                    label={props.group.title}
+                />
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
             <Droppable droppableId={props.group.id}>
                 {provided => (
                     <Items
@@ -31,6 +49,7 @@ export default function Group(props) {
                     </Items>
                 )}
             </Droppable>
-        </Container>
+            </ExpansionPanelDetails>
+        </ExpansionPanel>
     );
 }
