@@ -85,7 +85,7 @@ export default function Groups(props) {
                 data.groupsOrder.map((groupId) => {
                     const group = data.groups[groupId];
                     const items = group.itemsIds.map(itemId => data.items[itemId]);
-
+                    
                     return <Group key={group.id} group={group} items={items} />;
                 })
             }

@@ -3,24 +3,27 @@ import styled from 'styled-components';
 import Item from './ItemContainer';
 import { Droppable } from 'react-beautiful-dnd';
 import {
-    ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Checkbox, FormControlLabel,
-    Typography
+    ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Checkbox, FormControlLabel
 } from '@material-ui/core/';
 import { ExpandMore } from '@material-ui/icons/';
+import { useDispatch } from 'react-redux';
 
-const Container = styled.div`
-margin:8px;
-border: 1px solid lightgrey;
-border-radius: 2px;
-`;
-const Title = styled.h3`
-padding: 8px;
-`;
-const Items = styled.div`
-padding: 8px;
-`;
+const Items = styled.div` padding: 8px `;
+const InnerList = React.memo(function list(props) {
+    console.log(props);
+    return (
+        props.items.map((item, index) => <Item key={item.id} item={item} index={index} />)
+    );
+});
 
-export default function Group(props) {
+export default React.memo(function Group(props) {
+    const dispatch = useDispatch();
+    console.log(props);
+
+    const handleCheckboxClick = () => {
+        dispatch({ type: 'checkClickOnGroup', payload: { id: props.group.id } });
+    }
+
     return (
         <ExpansionPanel>
             <ExpansionPanelSummary
@@ -33,23 +36,23 @@ export default function Group(props) {
                     aria-label="group-details"
                     onClick={event => event.stopPropagation()}
                     onFocus={event => event.stopPropagation()}
-                    control={<Checkbox checked={true} />}
+                    control={<Checkbox checked={props.group.checked} onClick={handleCheckboxClick} />}
                     label={props.group.title}
                 />
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-            <Droppable droppableId={props.group.id}>
-                {provided => (
-                    <Items
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                    >
-                        {props.items.map((item,index) => <Item key={item.id} item={item} index={index} />)}
-                        {provided.placeholder}
-                    </Items>
-                )}
-            </Droppable>
+                <Droppable droppableId={props.group.id}>
+                    {provided => (
+                        <Items
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                        >
+                            <InnerList items={props.items} />
+                            {provided.placeholder}
+                        </Items>
+                    )}
+                </Droppable>
             </ExpansionPanelDetails>
         </ExpansionPanel>
     );
-}
+});
