@@ -40,3 +40,11 @@
 .MuiCollapse-hidden{
 display:none;
 }
+
+#Groups{
+position: fixed;
+top:0;
+left: 0;
+margin:10px;
+z-index:100;
+}

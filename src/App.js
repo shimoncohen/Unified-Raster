@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
-import Groups from './List/Groups';
-
+import Grid from '@material-ui/core/Grid';
+import Map from './Map/Map1';
 
 function App() {
 
   return (
-      <Groups />
+      <Map />
   );
 }
 
