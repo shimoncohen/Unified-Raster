@@ -10,7 +10,8 @@ import OlLayerGroup from 'ol/layer/Group';
 import Static from 'ol/source/ImageStatic';
 import Groups from '../List/Groups';
 
-import { Drawer } from '@material-ui/core';
+import { Drawer, IconButton } from '@material-ui/core';
+import { Close } from '@material-ui/icons';
 
 import {
   SimpleButton,
@@ -82,10 +83,9 @@ function App() {
         open={visible}
         variant="persistent"
       >
-             <SimpleButton
-        onClick={toggleDrawer}
-        icon="close"
-      />
+          <div>
+             <IconButton onClick={toggleDrawer}><Close /> </IconButton>
+             </div>
           <Groups map={map}/>
       </Drawer>
     </div>
