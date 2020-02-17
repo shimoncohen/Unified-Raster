@@ -10,7 +10,7 @@ import OlLayerGroup from 'ol/layer/Group';
 import Static from 'ol/source/ImageStatic';
 import Groups from '../List/Groups';
 
-import { Drawer } from 'antd';
+import { Drawer } from '@material-ui/core';
 
 import {
   SimpleButton,
@@ -77,12 +77,15 @@ function App() {
         icon="bars"
       />
       <Drawer
-        title="react-geo-application"
-        placement="right"
+        anchor="right"
         onClose={toggleDrawer}
-        visible={visible}
-        mask={false}
+        open={visible}
+        variant="persistent"
       >
+             <SimpleButton
+        onClick={toggleDrawer}
+        icon="close"
+      />
           <Groups map={map}/>
       </Drawer>
     </div>

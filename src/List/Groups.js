@@ -19,6 +19,7 @@ export default function Groups(props) {
 
         if (!destination) {
             return;
+            
         }
 
         if (destination.droppableId === source.droppableId &&
