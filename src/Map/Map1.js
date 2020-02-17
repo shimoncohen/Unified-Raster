@@ -61,7 +61,8 @@ function App() {
     setVisible(!visible);
     map.getLayerGroup().getLayersArray().forEach(lyr => console.log(lyr));
     
-    console.log(map.getLayerGroup().getLayersArray());
+    const layers = map.getLayerGroup().getLayersArray();
+    
     map.getLayerGroup().getLayersArray()[0].setVisible(false);
   }
 
@@ -82,7 +83,7 @@ function App() {
         visible={visible}
         mask={false}
       >
-          <Groups />
+          <Groups map={map}/>
       </Drawer>
     </div>
   );

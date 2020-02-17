@@ -11,6 +11,7 @@ export default function Groups(props) {
 
     useEffect(() => {
         setData(dataFromStore);
+        console.log(props.map);
     }, [dataFromStore])
 
     const onDragEnd = result => {
