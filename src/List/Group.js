@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 
 const Items = styled.div` padding: 8px `;
 const InnerList = React.memo(function list(props) {
-    console.log(props);
+    
     return (
         props.items.map((item, index) => <Item key={item.id} item={item} index={index} />)
     );
@@ -18,7 +18,7 @@ const InnerList = React.memo(function list(props) {
 
 export default React.memo(function Group(props) {
     const dispatch = useDispatch();
-    console.log(props);
+    
 
     const handleCheckboxClick = () => {
         dispatch({ type: 'checkClickOnGroup', payload: { id: props.group.id } });

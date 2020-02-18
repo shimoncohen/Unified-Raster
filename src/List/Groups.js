@@ -11,7 +11,6 @@ export default function Groups(props) {
 
     useEffect(() => {
         setData(dataFromStore);
-        console.log(props.map);
     }, [dataFromStore])
 
     const onDragEnd = result => {
@@ -19,7 +18,6 @@ export default function Groups(props) {
 
         if (!destination) {
             return;
-            
         }
 
         if (destination.droppableId === source.droppableId &&
@@ -82,6 +80,7 @@ export default function Groups(props) {
     }
 
     return (
+        data ?
         <DragDropContext onDragEnd={onDragEnd} >
             {
                 data.groupsOrder.map((groupId) => {
@@ -92,5 +91,7 @@ export default function Groups(props) {
                 })
             }
         </DragDropContext >
+        :
+        'Loading...'
     );
 }

@@ -1,9 +1,20 @@
 export const initialData = {
     items: {
-        'raster-1': { id: 'raster-1', type: 'Imagery', version: 3, name: 'raster 1', checked: true, selected: false },
-        'raster-2': { id: 'raster-2', type: 'Imagery', version: 6, name: 'raster 2', checked: true, selected: false },
-        'raster-3': { id: 'raster-3', type: 'Imagery', version: 5, name: 'raster 3', checked: false, selected: false },
-        'raster-4': { id: 'raster-4', type: 'Imagery', version: 4, name: 'raster 4', checked: true, selected: false },
+        'preview': {
+            id: 'preview', pixelSize: 0.35, version: 3, name: 'preview',
+            checked: true, selected: false, uri: 'http://localhost:3000/Rasters/preview.png',
+            extent: [-180, -90, 180, 90]
+        },
+        'preview_1': {
+            id: 'preview_1', pixelSize: 0.00002, version: 6, name: 'preview_1',
+            checked: true, selected: false, uri: 'http://localhost:3000/Rasters/preview_1.png',
+            extent: [-7.5507617, 49.7626698, -7.5359130, 49.7722828]
+        },
+        'preview_2': {
+            id: 'preview_2', pixelSize: 0.00002, version: 5, name: 'preview_2',
+            checked: false, selected: false, uri: 'http://localhost:3000/Rasters/preview_2.png',
+            extent: [-7.5507617, 49.7626698, -7.5359130, 49.7722828]
+        },
     },
     groups: {
         'group-1': {

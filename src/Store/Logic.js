@@ -2,13 +2,9 @@ export function isGroupChecked(state){
 state.data.groupsOrder.map(groupId => {
     const group = state.data.groups[groupId];
     let checked = true;
-    group.itemsIds.map(itemId => {
-        if(!state.data.items[itemId].checked){
-            checked=false;
-            group.checked=checked;
-            return state;
-        }
-    });
+    checked = !group.itemsIds.some(itemId => 
+        !state.data.items[itemId].checked
+    );
     group.checked=checked;
 });
 return state;
