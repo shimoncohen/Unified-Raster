@@ -11,7 +11,7 @@ import OlLayerGroup from 'ol/layer/Group';
 import Static from 'ol/source/ImageStatic';
 
 import Groups from '../List/Groups';
-import { getLayerByName, addLayersToMap, setZindexToLayers } from './MapUtil';
+import { getLayerByName, addLayersToMap, setZindexToLayers, getHoverLayer } from './MapUtil';
 
 import { Drawer, IconButton } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
@@ -31,10 +31,10 @@ import './react-geo.css';
 const layerGroup = new OlLayerGroup({
     name: 'Layergroup',
     layers: [
-        // new OlLayerTile({
-        //     source: new OlSourceOsm(),
-        //     name: 'OSM'
-        // }),
+        new OlLayerTile({
+            source: new OlSourceOsm(),
+            name: 'OSM'
+        }),
         // new OlLayerImage({
         //     name: 'try',
         //     source: new Static({
@@ -63,10 +63,8 @@ function App() {
     const [gotData, setGotData] = useState(false);
     const dataFromStore = useSelector(state => state.data);
 
+
     useEffect(() => {
-        console.log('data changed');
-        // const layer = MapUtil.getLayerByName(map,'try');
-        // layer.setVisible(!layer.getVisible());
         if (!gotData && dataFromStore.data) {
             addLayersToMap(map, dataFromStore.data);
             setGotData(true);
@@ -81,19 +79,37 @@ function App() {
         }
 
         if (dataFromStore.order) {
-            setZindexToLayers(map,dataFromStore.order);
+            setZindexToLayers(map, dataFromStore.order);
             dispatch({ type: 'clearOrder' });
+        }
+
+        if (dataFromStore.selected) {
+            const layer = getLayerByName(map, dataFromStore.selected);
+            const layerToDelete = getHoverLayer(map);
+            map.removeLayer(layerToDelete);
+            if (typeof (layer) === 'TileLayer')
+                return;
+            else {
+        
+                const newLayerWithHover = new OlLayerImage({
+                    name: layer.get('name')+' hover',
+                    zIndex: layer.getZIndex()-0.1,
+                    className: 'layerHover',
+                    // opacity:0.5,
+                    source: new Static({
+                        url: layer.getSource().getUrl(),
+                        projection: 'EPSG:4326',
+                        imageExtent: layer.getSource().getImageExtent()
+                    })
+                });
+                map.getLayers().push(newLayerWithHover);
+            }
         }
 
     }, [dataFromStore])
 
     const toggleDrawer = () => {
         setVisible(!visible);
-        // map.getLayerGroup().getLayersArray().forEach(lyr => console.log(lyr));
-
-        // const layers = map.getLayerGroup().getLayersArray();
-
-        // map.getLayerGroup().getLayersArray()[0].setVisible(false);
     }
 
     return (

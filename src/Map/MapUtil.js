@@ -10,14 +10,17 @@ export function getLayerByName(map, name) {
     )[0];
 }
 
+export function getHoverLayer(map) {
+    const mapLayers = map.getLayerGroup().getLayersArray();
+    return mapLayers.filter(layer =>
+        layer.get('name').includes('hover')
+    )[0];
+}
+
 export function addLayersToMap(map, layers) {
     const mapLayers = map.getLayers();
-    mapLayers.push( new OlLayerTile({
-        source: new OlSourceOsm(),
-        name: 'OSM'
-    }));
 
-    Object.keys(layers.items).map(key => {
+    Object.keys(layers.items).forEach(key => {
         const item = layers.items[key];
         const layer = new OlLayerImage({
             name: item.name,
@@ -27,15 +30,20 @@ export function addLayersToMap(map, layers) {
                 imageExtent: item.extent
             })
         });
-        if(item.name!=='OSM')
-        mapLayers.push(layer);
+        if (item.name !== 'OSM')
+            mapLayers.push(layer);
     });
     console.log(map.getLayerGroup().getLayersArray());
 }
 
-export function setZindexToLayers(map,order){
+export function setZindexToLayers(map, order) {
     const mapLayers = map.getLayerGroup().getLayersArray();
-    mapLayers.map(layer => {
-        layer.setZIndex(order[layer.get('name')]);
+    mapLayers.forEach(layer => {
+        if (!layer.get('name').includes('hover')) {
+            layer.setZIndex(order[layer.get('name')]);
+        }
+        else {
+            layer.setZIndex(order[layer.get('name').split(' ')[0]] - 0.1);
+        }
     });
 }

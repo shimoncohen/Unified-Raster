@@ -42,6 +42,9 @@ display:none;
 }
 
 #Groups{
-
 z-index:100;
+}
+
+.layerHover {
+filter: drop-shadow(10px 10px 0 rgba(253, 255, 110,0.8)) drop-shadow(-10px -10px 0 rgba(253,255,110,0.8));
 }

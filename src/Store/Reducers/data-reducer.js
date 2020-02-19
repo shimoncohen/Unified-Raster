@@ -6,6 +6,7 @@ let defaultState = {
     data: null,
     layersVisiblityChanged:null,
     order:null,
+    selected:null,
 }
 
 export default (state = defaultState, action) => {
@@ -28,9 +29,13 @@ export default (state = defaultState, action) => {
         let newState = cloneDeep(state);
         let groupChecked = !newState.data.groups[action.payload.id].checked;
         newState.data.groups[action.payload.id].checked = groupChecked;
+        newState.layersVisiblityChanged = newState.data.groups[action.payload.id].itemsIds.filter(itemId => 
+            newState.data.items[itemId].checked!==groupChecked);
+
         newState.data.groups[action.payload.id].itemsIds.map(itemId =>
             newState.data.items[itemId].checked = groupChecked);
-
+        
+        
         return newState;
     }
     if (action.type === 'selectItem') {
@@ -40,7 +45,9 @@ export default (state = defaultState, action) => {
                 newState.data.items[itemId].selected = false
             }
         });
+        //if selected make it unselected
         newState.data.items[action.payload.id].selected = !newState.data.items[action.payload.id].selected;
+        newState.selected = newState.data.items[action.payload.id].selected ? action.payload.id : null;
         return newState;
     }
     if (action.type === 'checkClickOnItem') {
@@ -59,6 +66,12 @@ export default (state = defaultState, action) => {
     {
         let newState = cloneDeep(state);
         newState.order = null;
+        return newState;
+    }
+    if(action.type === 'clearSelected')
+    {
+        let newState = cloneDeep(state);
+        newState.selected = null;
         return newState;
     }
     return defaultState;
