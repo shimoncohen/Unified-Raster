@@ -5,6 +5,14 @@ import {
 } from '@material-ui/core/';
 import { ExpandMore } from '@material-ui/icons/';
 import { useDispatch } from 'react-redux';
+import OpacitySlider from './OpacitySlider';
+
+const itemStyle = {
+    whiteSpace: 'nowrap',
+    overflow: 'auto',
+    
+    width: '120px',
+}
 
 export default React.memo(function Item(props) {
 
@@ -21,29 +29,29 @@ export default React.memo(function Item(props) {
 
     return (
 
-        <ExpansionPanel style={{background:props.item.selected ? 'rgba(0, 158, 115,0.1)' : ''}}>
-            <ExpansionPanelSummary
+        <ExpansionPanel style={{ background: props.item.selected ? 'rgba(0, 158, 115,0.1)' : '' }}>
+            <ExpansionPanelSummary 
+            style={{textAlign:'left'}}
+                {...props.provided.dragHandleProps}
                 expandIcon={<ExpandMore />}
                 aria-label="Expand"
                 aria-controls="additional-item-content"
                 id={props.item.id + '-expansion-panel-summary'}
             >
-                <div>
-                    <FormControlLabel
+                <div style={itemStyle}>
+                    <FormControlLabel 
                         aria-label="item-details"
                         onClick={event => event.stopPropagation()}
                         onFocus={event => event.stopPropagation()}
                         control={<Checkbox checked={props.item.checked} onClick={handleCheckboxClick} />}
                     // label={props.item.name}
                     />
-                    <Link style={{color:'inherit',textDecoration:'none'}} onClick={handleSelectItem}>{props.item.name}</Link>
+                    <Link style={{ color: 'inherit', textDecoration: 'none' }} onClick={handleSelectItem}>{props.item.name}</Link>
                 </div>
 
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                <Typography color="textSecondary">
-                    More details...
-          </Typography>
+                <OpacitySlider item={props.item} />
             </ExpansionPanelDetails>
         </ExpansionPanel>
 

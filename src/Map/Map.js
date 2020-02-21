@@ -86,16 +86,19 @@ function App() {
         if (dataFromStore.selected) {
             const layer = getLayerByName(map, dataFromStore.selected);
             const layerToDelete = getHoverLayer(map);
-            map.removeLayer(layerToDelete);
-            if (typeof (layer) === 'TileLayer')
+            if(layerToDelete){
+                map.removeLayer(layerToDelete);
+            }
+            
+            if (layer instanceof OlLayerTile)
                 return;
             else {
-        
+
                 const newLayerWithHover = new OlLayerImage({
-                    name: layer.get('name')+' hover',
-                    zIndex: layer.getZIndex()-0.1,
+                    name: layer.get('name') + ' hover',
+                    zIndex: layer.getZIndex() - 0.1,
+                    opacity: layer.getOpacity(),
                     className: 'layerHover',
-                    // opacity:0.5,
                     source: new Static({
                         url: layer.getSource().getUrl(),
                         projection: 'EPSG:4326',
@@ -104,6 +107,16 @@ function App() {
                 });
                 map.getLayers().push(newLayerWithHover);
             }
+        }
+
+        if (dataFromStore.opacityChanged) {
+            const layer = getLayerByName(map, dataFromStore.opacityChanged.id);
+            layer.setOpacity(dataFromStore.opacityChanged.opacity/100);
+            const hoveredLayer = getLayerByName(map, dataFromStore.opacityChanged.id+' hover');
+            if(hoveredLayer){
+                hoveredLayer.setOpacity(dataFromStore.opacityChanged.opacity/100);
+            }
+            dispatch({ type: 'clearOpacityChanged' });  
         }
 
     }, [dataFromStore])
@@ -131,7 +144,7 @@ function App() {
                 <div>
                     <IconButton onClick={toggleDrawer}><Close /> </IconButton>
                 </div>
-                <Groups map={map} />
+                <Groups />
             </Drawer>
         </div>
     );

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import './App.css';
-import Map from './Map/Map1';
+import Map from './Map/Map';
 import Axios from 'axios';
 import { useDispatch } from 'react-redux';
 

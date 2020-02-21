@@ -7,6 +7,7 @@ let defaultState = {
     layersVisiblityChanged:null,
     order:null,
     selected:null,
+    opacityChanged:null,
 }
 
 export default (state = defaultState, action) => {
@@ -54,7 +55,14 @@ export default (state = defaultState, action) => {
         let newState = cloneDeep(state);
         newState.data.items[action.payload.id].checked = !newState.data.items[action.payload.id].checked;
         newState.layersVisiblityChanged = [action.payload.id];
-        return isGroupChecked(newState);
+        return newState;
+    }
+    if (action.type === 'opacityChange') {
+        console.log(action.payload.opacity);
+        let newState = cloneDeep(state);
+        newState.data.items[action.payload.id].opacity = action.payload.opacity;
+        newState.opacityChanged = { id: action.payload.id, opacity: action.payload.opacity };
+        return newState;
     }
     if(action.type === 'clearLayersSettings')
     {
@@ -72,6 +80,13 @@ export default (state = defaultState, action) => {
     {
         let newState = cloneDeep(state);
         newState.selected = null;
+        return newState;
+    }
+
+    if(action.type === 'clearOpacityChanged')
+    {
+        let newState = cloneDeep(state);
+        newState.opacityChanged = null;
         return newState;
     }
     return defaultState;

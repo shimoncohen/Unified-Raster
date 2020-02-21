@@ -13,14 +13,13 @@ export default function Group(props) {
     return (
         // wrap the drag area, provided adds props and ref that react-beautiful-dnd needs
 
-        <Draggable draggableId={props.item.id} index={props.index}>
+        <Draggable draggableId={props.item.id} index={props.index} >
             {provided => (
                 <Container
                 {...provided.draggableProps}
-                {...provided.dragHandleProps}
                 ref={provided.innerRef}
                 >
-                    <Item item={props.item} />
+                    <Item item={props.item} provided={provided}/>
                 </Container>
             )}
         </Draggable>
