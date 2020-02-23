@@ -1,0 +1,1 @@
+export const MapCenter = [34.78,32.07];
