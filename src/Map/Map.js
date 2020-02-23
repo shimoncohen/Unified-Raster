@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { MapCenter } from './MapConfig';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlLayerTile from 'ol/layer/Tile';
@@ -29,24 +29,16 @@ import 'antd/dist/antd.css';
 import './react-geo.css';
 
 const layerGroup = new OlLayerGroup({
-    name: 'Layergroup',
+    name: 'osmBackground',
     layers: [
         new OlLayerTile({
             source: new OlSourceOsm(),
             name: 'OSM'
-        }),
-        // new OlLayerImage({
-        //     name: 'try',
-        //     source: new Static({
-        //         url: 'http://localhost:3000/Rasters/preview.png',
-        //         projection: 'EPSG:4326',
-        //         imageExtent: [-180, -90, 180, 90]
-        //     })
-        // })
+        })
     ]
 });
 
-const center = [34.78, 32.07];
+const center = MapCenter;
 
 const map = new OlMap({
     view: new OlView({
@@ -68,6 +60,14 @@ function App() {
         if (!gotData && dataFromStore.data) {
             addLayersToMap(map, dataFromStore.data);
             setGotData(true);
+            const layers = map.getLayers();
+            debugger;
+
+            console.log(layers);
+            const layer = getLayerByName(map, 'preview_1');
+            map.removeLayer(layer);
+            map.getLayers().insertAt(0, layer);
+            console.log(layers);
         }
 
         if (dataFromStore.layersVisiblityChanged) {
@@ -78,18 +78,18 @@ function App() {
             dispatch({ type: 'clearLayersSettings' });
         }
 
-        if (dataFromStore.order) {
-            setZindexToLayers(map, dataFromStore.order);
-            dispatch({ type: 'clearOrder' });
-        }
+        // if (dataFromStore.order) {
+        //     setZindexToLayers(map, dataFromStore.order);
+        //     dispatch({ type: 'clearOrder' });
+        // }
 
         if (dataFromStore.selected) {
             const layer = getLayerByName(map, dataFromStore.selected);
             const layerToDelete = getHoverLayer(map);
-            if(layerToDelete){
+            if (layerToDelete) {
                 map.removeLayer(layerToDelete);
             }
-            
+
             if (layer instanceof OlLayerTile)
                 return;
             else {
@@ -111,12 +111,12 @@ function App() {
 
         if (dataFromStore.opacityChanged) {
             const layer = getLayerByName(map, dataFromStore.opacityChanged.id);
-            layer.setOpacity(dataFromStore.opacityChanged.opacity/100);
-            const hoveredLayer = getLayerByName(map, dataFromStore.opacityChanged.id+' hover');
-            if(hoveredLayer){
-                hoveredLayer.setOpacity(dataFromStore.opacityChanged.opacity/100);
+            layer.setOpacity(dataFromStore.opacityChanged.opacity / 100);
+            const hoveredLayer = getLayerByName(map, dataFromStore.opacityChanged.id + ' hover');
+            if (hoveredLayer) {
+                hoveredLayer.setOpacity(dataFromStore.opacityChanged.opacity / 100);
             }
-            dispatch({ type: 'clearOpacityChanged' });  
+            dispatch({ type: 'clearOpacityChanged' });
         }
 
     }, [dataFromStore])
