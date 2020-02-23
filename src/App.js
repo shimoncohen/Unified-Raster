@@ -3,9 +3,11 @@ import './App.css';
 import Map from './Map/Map';
 import Axios from 'axios';
 import { useDispatch } from 'react-redux';
+import { useSnackbar } from 'notistack'
 
 function App() {
   const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
 
   const getDataFromServer = async () => {
     // Get layers from the server and update store.
@@ -14,7 +16,7 @@ function App() {
       dispatch({ type: 'updateStore', payload: layers.data });
     }
     catch{
-      alert('problem with server');
+      enqueueSnackbar('There is a problem in our server, please try again later', { variant: 'error' });
     }
   }
 
