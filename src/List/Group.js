@@ -8,18 +8,17 @@ import {
 import { ExpandMore } from '@material-ui/icons/';
 import { useDispatch } from 'react-redux';
 
-const Items = styled.div` padding: 8px `;
+const Items = styled.div` padding: 8px;
+max-height:500px; 
+overflow:auto; `;
 const InnerList = React.memo(function list(props) {
-    
     return (
-        props.items.map((item, index) => <Item key={item.id} item={item} index={index} />)
+        props.items.map((item, index) => <Item key={item.id} item={item} index={index} /> )
     );
 });
 
 export default React.memo(function Group(props) {
     const dispatch = useDispatch();
-    
-
     const handleCheckboxClick = () => {
         dispatch({ type: 'checkClickOnGroup', payload: { id: props.group.id } });
     }

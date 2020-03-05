@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import Group from './Group';
 import { useSelector, useDispatch } from 'react-redux';
+import { getLayerByName, addLayersToMap, setZindexToLayers, getHoverLayer, getLayerGroupByName } from '../Map/MapUtil';
 
 
 export default function Groups(props) {
@@ -11,6 +12,7 @@ export default function Groups(props) {
 
     useEffect(() => {
         setData(dataFromStore);
+        console.log(dataFromStore);
     }, [dataFromStore])
 
     const onDragEnd = result => {
@@ -27,6 +29,10 @@ export default function Groups(props) {
 
         const groupStart = data.groups[source.droppableId];
         const groupFinisih = data.groups[destination.droppableId];
+
+        const groupLayerStart = getLayerGroupByName(props.map, source.droppableId).getLayers();
+        const groupLayerStartLength = groupLayerStart.getLength();
+
         let newData;
 
         if (groupStart === groupFinisih) {
@@ -47,6 +53,10 @@ export default function Groups(props) {
                     [newGroup.id]: newGroup,
                 }
             }
+            // The layers render from the begin to end so we should reverse it.
+            const layerChanged = groupLayerStart.removeAt(groupLayerStartLength - source.index - 1);
+            groupLayerStart.insertAt(groupLayerStartLength - destination.index - 1, layerChanged);
+
         }
 
         else {
@@ -73,25 +83,32 @@ export default function Groups(props) {
                     [newFinish.id]: newFinish,
                 },
             };
+
+            const groupLayerEnd = getLayerGroupByName(props.map, destination.droppableId).getLayers();
+            const groupLayerEndLength = groupLayerEnd.getLength();
+
+            const layerChanged = groupLayerStart.removeAt(groupLayerStartLength - source.index - 1);
+            groupLayerEnd.insertAt(groupLayerEndLength - destination.index, layerChanged);
+
         }
 
         setData(newData);
-        dispatch({type:'updateStore',payload:newData});
+        dispatch({ type: 'updateStore', payload: newData });
     }
 
     return (
         data ?
-        <DragDropContext onDragEnd={onDragEnd} >
-            {
-                data.groupsOrder.map((groupId) => {
-                    const group = data.groups[groupId];
-                    const items = group.itemsIds.map(itemId => data.items[itemId]);
-                    
-                    return <Group key={group.id} group={group} items={items} />;
-                })
-            }
-        </DragDropContext >
-        :
-        'Loading...'
+            <DragDropContext onDragEnd={onDragEnd} >
+                {
+                    data.groupsOrder.map((groupId) => {
+                        const group = data.groups[groupId];
+                        const items = group.itemsIds.map(itemId => data.items[itemId]);
+
+                        return <Group key={group.id} group={group} items={items} />;
+                    })
+                }
+            </DragDropContext >
+            :
+            'Loading...'
     );
 }

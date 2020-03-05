@@ -11,7 +11,7 @@ import OlLayerGroup from 'ol/layer/Group';
 import Static from 'ol/source/ImageStatic';
 
 import Groups from '../List/Groups';
-import { getLayerByName, addLayersToMap, setZindexToLayers, getHoverLayer } from './MapUtil';
+import { getLayerByName, addLayersToMap, getHoverLayer } from './MapUtil';
 
 import { Drawer, IconButton } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
@@ -21,22 +21,13 @@ import {
     MapComponent,
     NominatimSearch,
     MeasureButton,
-    LayerTree
+    LayerTree,
+    DigitizeButton
 } from '@terrestris/react-geo';
 
 import 'ol/ol.css';
 import 'antd/dist/antd.css';
 import './react-geo.css';
-
-const layerGroup = new OlLayerGroup({
-    name: 'osmBackground',
-    layers: [
-        new OlLayerTile({
-            source: new OlSourceOsm(),
-            name: 'OSM'
-        })
-    ]
-});
 
 const center = MapCenter;
 
@@ -44,9 +35,9 @@ const map = new OlMap({
     view: new OlView({
         center: center,
         projection: 'EPSG:4326',
-        zoom: 5,
+        zoom: 17,
     }),
-    layers: [layerGroup]
+    layers: []
 });
 
 function App() {
@@ -54,50 +45,95 @@ function App() {
     const [visible, setVisible] = useState(false);
     const [gotData, setGotData] = useState(false);
     const dataFromStore = useSelector(state => state.data);
+    const [renderCompleted, setRenderCompleted] = useState(false);
+    const canvas = useRef(null);
 
+    const asyncForEach = async (array, callback) => {
+        for (let index = 0; index < array.length; index++) {
+            await callback(array[index], index, array);
+        }
+    };
+
+    const loadImage = (src) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.addEventListener("load", () => resolve(img));
+            img.addEventListener("error", err => reject(err));
+            img.src = src;
+        });
+    };
+
+    const drawCanvas = async () => {
+        const ctx = canvas.current.getContext('2d');
+        const width = canvas.current.width;
+        const height = canvas.current.height;
+        await asyncForEach(Object.keys(dataFromStore.data.items), async (itemId) => {
+            try {
+                let img = await loadImage(dataFromStore.data.items[itemId].uri);
+                ctx.drawImage(img, 0, 0, +img.width, +img.height, 0, 0, width, height);
+            }
+            catch{
+                console.log('error at ' + itemId);
+            }
+        });
+
+        const layer = new OlLayerImage({
+            name: 'try',
+            source: new Static({
+                url: canvas.current.toDataURL(),
+                projection: 'EPSG:4326',
+                imageExtent: [-180, -90, 180, 90]
+            })
+        });
+
+        map.getLayers().push(layer);
+        console.log(map.getLayers());
+
+    }
 
     useEffect(() => {
         if (!gotData && dataFromStore.data) {
             addLayersToMap(map, dataFromStore.data);
-            setGotData(true);
-            const layers = map.getLayers();
-            debugger;
 
-            console.log(layers);
-            const layer = getLayerByName(map, 'preview_1');
-            map.removeLayer(layer);
-            map.getLayers().insertAt(0, layer);
-            console.log(layers);
+            // let img = new Image();
+            // img.onload = () => {
+            //     let ctx = canvas.current.getContext('2d');
+            //     ctx.drawImage(img, 0, 0, 180, 90);
+            // };
+
+            //  drawCanvas();
+
+
+
+            setGotData(true)
         }
 
         if (dataFromStore.layersVisiblityChanged) {
-            dataFromStore.layersVisiblityChanged.map(name => {
+            dataFromStore.layersVisiblityChanged.forEach(name => {
                 const layer = getLayerByName(map, name);
                 layer.setVisible(!layer.getVisible());
             });
             dispatch({ type: 'clearLayersSettings' });
         }
 
-        // if (dataFromStore.order) {
-        //     setZindexToLayers(map, dataFromStore.order);
-        //     dispatch({ type: 'clearOrder' });
-        // }
 
         if (dataFromStore.selected) {
             const layer = getLayerByName(map, dataFromStore.selected);
             const layerToDelete = getHoverLayer(map);
             if (layerToDelete) {
                 map.removeLayer(layerToDelete);
+                if (layerToDelete.get('name') === dataFromStore.selected + ' hover') {
+                    return;
+                }
             }
 
-            if (layer instanceof OlLayerTile)
+            if (layer instanceof OlLayerTile) {
                 return;
+            }
             else {
-
                 const newLayerWithHover = new OlLayerImage({
                     name: layer.get('name') + ' hover',
-                    zIndex: layer.getZIndex() - 0.1,
-                    opacity: layer.getOpacity(),
+                    opacity: 1,
                     className: 'layerHover',
                     source: new Static({
                         url: layer.getSource().getUrl(),
@@ -125,11 +161,33 @@ function App() {
         setVisible(!visible);
     }
 
+    const onRenderComplete = () => {
+        setRenderCompleted(true);
+        map.removeEventListener('rendercomplete', onRenderComplete);
+    }
+
+    map.on('rendercomplete', onRenderComplete);
+
     return (
+
         <div className="App">
+            <DigitizeButton
+                name="drawRectangle"
+                map={map}
+                drawType="Rectangle"
+                onDrawEnd={(e) => { console.log(e); }}
+            >
+                Draw rectangle
+            </DigitizeButton>
+
+
+            <canvas style={{ display: 'none' }} ref={canvas} width={'1800px'} height={'900px'} />
+            {!renderCompleted ? <div className='loading'>'dsad'</div> : null}
             <MapComponent
                 map={map}
             />
+
+
             <SimpleButton
                 style={{ position: 'fixed', top: '30px', right: '30px' }}
                 onClick={toggleDrawer}
@@ -144,8 +202,9 @@ function App() {
                 <div>
                     <IconButton onClick={toggleDrawer}><Close /> </IconButton>
                 </div>
-                <Groups />
+                <Groups map={map} />
             </Drawer>
+
         </div>
     );
 }

@@ -9,7 +9,8 @@ margin-bottom:8px;
 background:white;
 `;
 
-export default function Group(props) {
+export default React.memo(function ItemContainer(props) {
+
     return (
         // wrap the drag area, provided adds props and ref that react-beautiful-dnd needs
 
@@ -24,4 +25,4 @@ export default function Group(props) {
             )}
         </Draggable>
     );
-}
+});
