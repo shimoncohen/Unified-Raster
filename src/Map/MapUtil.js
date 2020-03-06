@@ -76,11 +76,11 @@ export function addLayersToMap(map, layers) {
                     name: 'OSM'
                 })
             }
-            // layerGroupLayers.insertAt(0,layer);
-            layerGroupLayers.push(layer);
+            layerGroupLayers.insertAt(0,layer);
+            // layerGroupLayers.push(layer);
         });
-        // mapLayers.insertAt(0,layerGroup);
-        mapLayers.push(layerGroup);
+        mapLayers.insertAt(0,layerGroup);
+        // mapLayers.push(layerGroup);
     });
     console.log(map.getLayers());
 

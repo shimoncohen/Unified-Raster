@@ -12,7 +12,7 @@ function App() {
   const getDataFromServer = async () => {
     // Get layers from the server and update store.
     try {
-      const layers = await Axios.get('http://localhost:5000/layers/');
+      const layers = await Axios.get('http://localhost:5000/layers/small');
       dispatch({ type: 'updateStore', payload: layers.data });
     }
     catch{

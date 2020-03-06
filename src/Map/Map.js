@@ -171,15 +171,6 @@ function App() {
     return (
 
         <div className="App">
-            <DigitizeButton
-                name="drawRectangle"
-                map={map}
-                drawType="Rectangle"
-                onDrawEnd={(e) => { console.log(e); }}
-            >
-                Draw rectangle
-            </DigitizeButton>
-
 
             <canvas style={{ display: 'none' }} ref={canvas} width={'1800px'} height={'900px'} />
             {!renderCompleted ? <div className='loading'>'dsad'</div> : null}
