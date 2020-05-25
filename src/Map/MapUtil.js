@@ -26,6 +26,16 @@ export function getHoverLayer(map) {
     )[0];
 }
 
+export function setVisibleGroup(map,groupName,visibility){
+    const groupLayers = map.getLayers().getArray().filter(group => {
+        return group.get('name') === groupName;
+    })[0].setVisible(visibility);
+    
+    // groupLayers.getLayers().forEach(layer => {
+    //     layer.setVisible(visibility);
+    // })
+}
+
 // export function addLayersToMap(map, layers) {
 //     const mapLayers = map.getLayers();
 

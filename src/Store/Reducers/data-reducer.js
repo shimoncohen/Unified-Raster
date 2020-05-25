@@ -1,63 +1,64 @@
-import { initialData } from '../../Data/initial-data';
+import produce from 'immer';
 import cloneDeep from 'lodash/cloneDeep';
-import { isGroupChecked } from '../Logic';
 
 let defaultState = {
     data: null,
     layersVisiblityChanged: null,
+    groupLayerVisibilityChanged: null,
     selected: null,
     opacityChanged: null,
 }
 
 export default (state = defaultState, action) => {
+    // Fires when data arrived from server
+    // or user change order of items
     if (action.type === 'updateStore') {
-        return isGroupChecked({ data: action.payload });
+        return { data: action.payload };
     }
+
+    //Fires when user click on group check 
+    // (make group visible or not)
     if (action.type === 'checkClickOnGroup') {
-        let newState = cloneDeep(state);
-        let groupChecked = !newState.data.groups[action.payload.id].checked;
-        newState.data.groups[action.payload.id].checked = groupChecked;
-        newState.layersVisiblityChanged = newState.data.groups[action.payload.id].itemsIds.filter(itemId =>
-            newState.data.items[itemId].checked !== groupChecked);
+        return produce(state,draft => {
+            let groupChecked = !draft.data.groups[action.payload.id].checked;
+            draft.data.groups[action.payload.id].checked = groupChecked;    
 
-        newState.data.groups[action.payload.id].itemsIds.map(itemId =>
-            newState.data.items[itemId].checked = groupChecked);
+                draft.groupLayerVisibilityChanged={
+                    group: action.payload.id,
+                    visibility: groupChecked
+                }
+        })
 
-
-        return newState;
     }
+
+    // Fires when user select an item
     if (action.type === 'selectItem') {
-         let newState = cloneDeep(state);
-        // let newState = { ...state };
-        Object.keys(newState.data.items).forEach(itemId => {
-            if (itemId !== action.payload.id) {
-                newState.data.items[itemId].selected = false
+         return produce(state, draft => {
+
+            // clear selected of last selected item
+            const lastSelectedItemId = Object.keys(draft.data.items).find(
+                itemId => { return draft.data.items[itemId].selected });
+            if(lastSelectedItemId){
+                draft.data.items[lastSelectedItemId].selected = false;
             }
-        });
-        //if selected make it unselected
-        newState.data.items[action.payload.id].selected = !newState.data.items[action.payload.id].selected;
-        newState.selected = state.select !== action.payload.id ? action.payload.id : null;
-        return newState;
+    
+             if (lastSelectedItemId !== action.payload.id){
+                draft.data.items[action.payload.id].selected = true;
+                draft.selected = action.payload.id;
+             }
+            
+         })
     }
     // Fires when user click on item check (make item visible or not)
     if (action.type === 'checkClickOnItem') {
-        return isGroupChecked({
-            ...state,
-            data: {
-                ...state.data,
-                items: {
-                    ...state.data.items,
-                    [action.payload.id]: {
-                        ...state.data.items[action.payload.id],
-                        checked: !state.data.items[action.payload.id].checked
-                    }
-                }
-            },
-            layersVisiblityChanged : [action.payload.id]
-        });
+       return produce(state, draft => {
+           draft.data.items[action.payload.id].checked = !draft.data
+            .items[action.payload.id].checked;
+           draft.layersVisiblityChanged = [action.payload.id];
+       })
     }
     if (action.type === 'opacityChange') {
-        console.log(action.payload.opacity);
+        
         let newState = cloneDeep(state);
         newState.data.items[action.payload.id].opacity = action.payload.opacity;
         newState.opacityChanged = { id: action.payload.id, opacity: action.payload.opacity };
@@ -68,12 +69,17 @@ export default (state = defaultState, action) => {
         newState.layersVisiblityChanged = null;
         return newState;
     }
+    if (action.type === 'clearGroupVisibility') {
+        let newState = { ...state };
+        newState.groupLayerVisibilityChanged = null;
+        return newState;
+    }
     if (action.type === 'clearSelected') {
         let newState = cloneDeep(state);
         newState.selected = null;
         return newState;
     }
-
+    
     if (action.type === 'clearOpacityChanged') {
         let newState = cloneDeep(state);
         newState.opacityChanged = null;
