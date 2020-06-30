@@ -9,11 +9,12 @@ import OlSourceOsm from 'ol/source/OSM';
 import OlSourceTileWMS from 'ol/source/TileWMS';
 import OlLayerGroup from 'ol/layer/Group';
 import Static from 'ol/source/ImageStatic';
+import ProjectSelector from '../List/ProjectSelector';
 
 import Groups from '../List/Groups';
 import { getLayerByName, addLayersToMap, getHoverLayer, setVisibleGroup } from './MapUtil';
 
-import { Drawer, IconButton } from '@material-ui/core';
+import { Drawer, IconButton, Paper } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 
 import {
@@ -30,14 +31,22 @@ import 'antd/dist/antd.css';
 import './react-geo.css';
 
 const center = MapCenter;
+const osm = new OlLayerTile({
+    source: new OlSourceOsm(),
+    name: 'OSM'
+})
+const layerGroupOsm = new OlLayerGroup({
+    name: 'OSM',
+    layers: [osm]
+});
 
 const map = new OlMap({
     view: new OlView({
         center: center,
         projection: 'EPSG:4326',
-        zoom: 17,
+        zoom: 5,
     }),
-    layers: []
+    layers: [layerGroupOsm]
 });
 
 function App() {
@@ -47,24 +56,6 @@ function App() {
     const dataFromStore = useSelector(state => state.data);
 
     useEffect(() => {
-        if (!gotData && dataFromStore.data) {
-            addLayersToMap(map, dataFromStore.data);
-            setGotData(true)
-        }
-
-        if (dataFromStore.layersVisiblityChanged) {
-            dataFromStore.layersVisiblityChanged.forEach(name => {
-                const layer = getLayerByName(map, name);
-                layer.setVisible(!layer.getVisible());
-            });
-            dispatch({ type: 'clearLayersSettings' });
-        }
-
-        if(dataFromStore.groupLayerVisibilityChanged) {
-            setVisibleGroup(map,dataFromStore.groupLayerVisibilityChanged.group,dataFromStore.groupLayerVisibilityChanged.visibility);
-            dispatch({ type: 'clearGroupVisibility' });
-        }
-
 
         if (dataFromStore.selected) {
             const layer = getLayerByName(map, dataFromStore.selected);
@@ -72,11 +63,15 @@ function App() {
             if (layerToDelete) {
                 map.removeLayer(layerToDelete);
                 if (layerToDelete.get('name') === dataFromStore.selected + ' hover') {
+                    dispatch({ type: 'clearSelected' });
+
                     return;
                 }
             }
 
             if (layer instanceof OlLayerTile) {
+                dispatch({ type: 'clearSelected' });
+
                 return;
             }
             else {
@@ -92,19 +87,16 @@ function App() {
                 });
                 map.getLayers().push(newLayerWithHover);
             }
+            dispatch({ type: 'clearSelected' });
+
         }
 
-        if (dataFromStore.opacityChanged) {
-            const layer = getLayerByName(map, dataFromStore.opacityChanged.id);
-            layer.setOpacity(dataFromStore.opacityChanged.opacity / 100);
-            const hoveredLayer = getLayerByName(map, dataFromStore.opacityChanged.id + ' hover');
-            if (hoveredLayer) {
-                hoveredLayer.setOpacity(dataFromStore.opacityChanged.opacity / 100);
-            }
-            dispatch({ type: 'clearOpacityChanged' });
-        }
+    }, [dataFromStore]);
 
-    }, [dataFromStore])
+    useEffect(() => {
+        dispatch({ type: 'addMap', payload: { map } });
+        console.log(map.getLayers());
+    }, [map])
 
     const toggleDrawer = () => {
         setVisible(!visible);
@@ -129,14 +121,18 @@ function App() {
                 onClose={toggleDrawer}
                 open={visible}
                 variant="persistent"
+                classes= {{
+                    paper: 'paperDrawer'
+                }}
             >
-                <div>
-                    <IconButton onClick={toggleDrawer}><Close /> </IconButton>
-                </div>
-                <Groups map={map} />
+            <div>
+                <IconButton onClick={toggleDrawer}><Close /> </IconButton>
+            </div>
+            <ProjectSelector />
+            <Groups map={map} />
             </Drawer>
 
-        </div>
+        </div >
     );
 }
 

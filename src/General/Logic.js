@@ -9,3 +9,13 @@ export function isGroupChecked(state) {
     });
     return state;
 }
+
+export function makeCoordinatesArrayFromString(s) {
+    let arr = [];
+    let splitS = s.split(',');
+    arr.push(parseInt(splitS[3]));
+    arr.push(parseInt(splitS[1]));
+    arr.push(parseInt(splitS[2]));
+    arr.push(parseInt(splitS[0]));
+    return arr;
+}

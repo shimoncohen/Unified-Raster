@@ -2,17 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import Group from './Group';
 import { useSelector, useDispatch } from 'react-redux';
-import { getLayerByName, addLayersToMap, setZindexToLayers, getHoverLayer, getLayerGroupByName } from '../Map/MapUtil';
+import { getLayerByName, addLayersToMap, getHoverLayer, getLayerGroupByName } from '../Map/MapUtil';
 
 
-export default function Groups(props) {
+export default React.memo(function Groups(props) {
     const dataFromStore = useSelector(state => state.data.data);
     const dispatch = useDispatch();
     const [data, setData] = useState(dataFromStore);
 
     useEffect(() => {
         setData(dataFromStore);
-        console.log(dataFromStore);
     }, [dataFromStore])
 
     const onDragEnd = result => {
@@ -102,13 +101,14 @@ export default function Groups(props) {
                 {
                     data.groupsOrder.map((groupId) => {
                         const group = data.groups[groupId];
-                        const items = group.itemsIds.map(itemId => data.items[itemId]);
+                        //const items = group.itemsIds.map(itemId => data.items[itemId]);
+                        const items = group.itemsIds;
 
                         return <Group key={group.id} group={group} items={items} />;
                     })
                 }
             </DragDropContext >
             :
-            'Loading...'
+            'Choose project to start'
     );
-}
+});

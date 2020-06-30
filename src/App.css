@@ -69,3 +69,8 @@ z-index:100;
   font-weight: bold;
   transition: ease-in(0.5s);
 }
+
+.paperDrawer{
+  min-width: 25%;
+
+}

@@ -14,7 +14,7 @@ export default React.memo(function ItemContainer(props) {
     return (
         // wrap the drag area, provided adds props and ref that react-beautiful-dnd needs
 
-        <Draggable draggableId={props.item.id} index={props.index} >
+        <Draggable draggableId={props.item} index={props.index} >
             {provided => (
                 <Container
                 {...provided.draggableProps}
