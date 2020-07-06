@@ -1,18 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { TextField, Button, Grid, RadioGroup, Radio, FormControlLabel, FormLabel } from '@material-ui/core/'
+import { TextField, Button, Grid, RadioGroup, Radio, FormControlLabel, FormLabel,Switch } from '@material-ui/core/'
 import Done from '@material-ui/icons/Done'
 import { useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 
+const useStyles = makeStyles({
+    band: {
+        justifyContent: 'space-around',
+    },
+});
 
 export default function Mask(props) {
+    const classes = useStyles();
     const [feather, setFeather] = useState({ error: false, helperText: '', value: 0 });
     const [holesize, setHolesize] = useState({ error: false, helperText: '', value: 0 });
     const [band, setBand] = useState('1');
+    const [whiteFill, setWhiteFill] = useState(false);
 
     const dispatch = useDispatch();
 
     const handleChangeBand = e => {
         setBand(e.target.value);
+    }
+
+    const handleChangeWhiteFill = () => {
+        setWhiteFill(!whiteFill);
     }
 
     const handleChangeFeather = e => {
@@ -47,15 +59,26 @@ export default function Mask(props) {
 
     return (
         <div>
-            <Grid container spacing={2}>
-<Grid item xs={12}>
-<FormLabel component="legend">Band</FormLabel>
-<RadioGroup row aria-label="band" value={band} onChange={handleChangeBand}>
-        <FormControlLabel value="0" control={<Radio />} label="Red" />
-        <FormControlLabel value="1" control={<Radio />} label="Green" />
-        <FormControlLabel value="2" control={<Radio />} label="Blue" />
-      </RadioGroup>
-</Grid>
+            <Grid
+                container
+                spacing={2}
+                justify="space-evenly"
+                alignItems="center">
+                <Grid item xs={6}>
+                    <FormLabel component="legend">Band</FormLabel>
+                    <RadioGroup row aria-label="band" value={band} className={classes.band} onChange={handleChangeBand}>
+                        <FormControlLabel value="0" control={<Radio />} label="Red" />
+                        <FormControlLabel value="1" control={<Radio />} label="Green" />
+                        <FormControlLabel value="2" control={<Radio />} label="Blue" />
+                    </RadioGroup>
+                </Grid>
+
+                <Grid item xs={6}>
+                <FormLabel component="legend">White fill</FormLabel>
+                    <FormControlLabel
+                        control={<Switch checked={whiteFill} onChange={handleChangeWhiteFill} name="whileFill" />}
+                    />
+                </Grid>
 
                 <Grid item xs={6}>
                     <TextField
