@@ -9,8 +9,9 @@ import {
 import { ExpandMore } from '@material-ui/icons/';
 import { useDispatch } from 'react-redux';
 
-const Items = styled.div` padding: 5px;
+const Items = styled.div` padding: 0px;
 max-height:500px;
+width:100%;
 overflow:auto; `;
 const InnerList = React.memo(function list(props) {
     return (

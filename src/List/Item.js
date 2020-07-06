@@ -9,14 +9,14 @@ import OpacitySlider from './OpacitySlider';
 import SettingsTabs from '../Tabs/SettingsTabs';
 
 const itemStyle = {
-    whiteSpace: 'nowrap',
-    overflow: 'auto',
-    width: '200px',
+    
+    width: '100%',
 }
 
 const avatarStyle = {
     display: 'inline-table',
-    marginRight: '10px',
+    marginRight: '5px',
+    marginLeft: '-10px',
 }
 
 export default React.memo(function Item(props) {
