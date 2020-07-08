@@ -16,6 +16,7 @@ export default (state = defaultState, action) => {
         return produce(state, draft => {
             console.log(state.map.getLayers());
             state.map.getLayers().clear();
+            // TODO : Add open street map layer
             const resources = action.payload;
             const groups = {};
             const items = {};
@@ -24,6 +25,7 @@ export default (state = defaultState, action) => {
                 resource.uri = Config.urlThumbnail +
                     'name=' + resource.name + '&version=' + resource.version;
                 resource.checked = true;
+                resource.selected = false;
                 resource.extent = makeCoordinatesArrayFromString(resource.extent);
                 items[resource.name] = resource;
                 if (!groups['level-' + resource.level]) {
@@ -54,7 +56,6 @@ export default (state = defaultState, action) => {
         });
     }
     if (action.type === 'addMap') {
-        debugger;
         return produce(state, draft => {
             draft.map = action.payload.map;
         });
@@ -62,7 +63,6 @@ export default (state = defaultState, action) => {
     //Fires when user click on group check 
     // (make group visible or not)
     if (action.type === 'checkClickOnGroup') {
-        debugger;
         const groupChecked = !state.data.groups[action.payload.id].checked;
         setVisibleGroup(state.map, action.payload.id, groupChecked);
         return produce(state, draft => {

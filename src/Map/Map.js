@@ -43,6 +43,7 @@ const layerGroupOsm = new OlLayerGroup({
 const map = new OlMap({
     view: new OlView({
         center: center,
+        // TODO : Add to config
         projection: 'EPSG:4326',
         zoom: 5,
     }),

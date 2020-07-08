@@ -4,6 +4,7 @@ import OlLayerTile from 'ol/layer/Tile';
 import OlSourceOsm from 'ol/source/OSM';
 import OlLayerGroup from 'ol/layer/Group';
 
+
 export function getLayerByName(map, name) {
     const mapLayers = map.getLayerGroup().getLayersArray();
     return mapLayers.filter(layer =>
@@ -46,6 +47,7 @@ export function addLayersToMap(map, layers) {
         const layerGroupLayers = layerGroup.getLayers();
         let layer;
         itemsIds.forEach(itemId => {
+            debugger;
             const item = layers.items[itemId];
             layer = new OlLayerImage({
                 name: item.name,
@@ -56,11 +58,11 @@ export function addLayersToMap(map, layers) {
                     crossOrigin: "Anonymous"
                 })
             });
-            layerGroupLayers.insertAt(0, layer);
-            // layerGroupLayers.push(layer);
+            // layerGroupLayers.insertAt(0, layer);
+            layerGroupLayers.push(layer);
         });
-        mapLayers.insertAt(1, layerGroup);
-        // mapLayers.push(layerGroup);
+        // mapLayers.insertAt(0, layerGroup);
+        mapLayers.push(layerGroup);
     });
     console.log(map.getLayers());
 

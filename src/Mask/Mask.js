@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { TextField, Button, Grid, RadioGroup, Radio, FormControlLabel, FormLabel,Switch } from '@material-ui/core/'
+import { TextField, Button, Grid, RadioGroup, Radio, FormControlLabel, FormLabel, Switch } from '@material-ui/core/'
 import Done from '@material-ui/icons/Done'
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import {MuiPickersUtilsProvider,KeyboardDatePicker} from '@material-ui/pickers';
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
 
 const useStyles = makeStyles({
     band: {
@@ -16,6 +19,7 @@ export default function Mask(props) {
     const [holesize, setHolesize] = useState({ error: false, helperText: '', value: 0 });
     const [band, setBand] = useState('1');
     const [whiteFill, setWhiteFill] = useState(false);
+    const [sourceDate, setSourceDate] = useState(new Date());
 
     const dispatch = useDispatch();
 
@@ -25,6 +29,10 @@ export default function Mask(props) {
 
     const handleChangeWhiteFill = () => {
         setWhiteFill(!whiteFill);
+    }
+
+    const handleChangeSourceDate = date => {
+        setSourceDate(date);
     }
 
     const handleChangeFeather = e => {
@@ -73,11 +81,28 @@ export default function Mask(props) {
                     </RadioGroup>
                 </Grid>
 
-                <Grid item xs={6}>
-                <FormLabel component="legend">White fill</FormLabel>
+                <Grid item xs={2}>
+                    <FormLabel component="legend">White fill</FormLabel>
                     <FormControlLabel
                         control={<Switch checked={whiteFill} onChange={handleChangeWhiteFill} name="whileFill" />}
                     />
+                </Grid>
+
+                <Grid item xs={4}>
+                <FormLabel component="legend">Source date</FormLabel>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <KeyboardDatePicker
+                        disableToolbar
+                        variant="inline"
+                        format="dd/MM/yyyy"
+                        margin="normal"
+                        id="date-picker-inline"
+
+                        value={sourceDate}
+                        onChange={handleChangeSourceDate}
+
+                    />
+                    </MuiPickersUtilsProvider>
                 </Grid>
 
                 <Grid item xs={6}>
