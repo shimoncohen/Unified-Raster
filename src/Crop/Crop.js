@@ -73,6 +73,7 @@ export default function Crop(props) {
                 onChange={newCrop => { setCrop(newCrop); }}
                 onImageLoaded={img => onImageLoaded(img)}
             />
+            {/* TODO: center button */}
             <Button
                 variant='contained'
                 startIcon={<Done />}

@@ -3,7 +3,7 @@ import { TextField, Button, Grid, RadioGroup, Radio, FormControlLabel, FormLabel
 import Done from '@material-ui/icons/Done'
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import {MuiPickersUtilsProvider,KeyboardDatePicker} from '@material-ui/pickers';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 
@@ -15,8 +15,8 @@ const useStyles = makeStyles({
 
 export default function Mask(props) {
     const classes = useStyles();
-    const [feather, setFeather] = useState({ error: false, helperText: '', value: 0 });
-    const [holesize, setHolesize] = useState({ error: false, helperText: '', value: 0 });
+    const [feather, setFeather] = useState(0);
+    const [holesize, setHolesize] = useState(0);
     const [band, setBand] = useState('1');
     const [whiteFill, setWhiteFill] = useState(false);
     const [sourceDate, setSourceDate] = useState(new Date());
@@ -36,40 +36,46 @@ export default function Mask(props) {
     }
 
     const handleChangeFeather = e => {
-        if (e === '') {
-            setFeather({ error: true, helperText: 'Can\'t be empty', value: e });
+        if (e === '' || parseInt(e) < 0) {
+            setFeather(0);
+            return;
         }
-        if (['-', '+'].includes(e)) {
-            setFeather({ error: false, helperText: '', value: 0 });
+        if (parseInt(e) > 255) {
+            setFeather(255);
+            return;
         }
-        if (e > 255) {
-            setFeather({ error: false, helperText: '', value: 255 });
+        if (e.length > 1 && e[0] === '0') {
+            let withoutZero = e.substring(1);
+            setFeather(withoutZero);
+            return;
         }
-        else {
-            setFeather({ error: false, helperText: '', value: e });
-        }
+        setFeather(parseInt(e));
+
     }
 
     const handleChangeHolesize = e => {
-        if (e === '') {
-            setHolesize({ error: true, helperText: 'Can\'t be empty', value: e });
+        if (e === '' || parseInt(e) < 0) {
+            setHolesize(0);
+            return;
         }
-        if (['-', '+'].includes(e)) {
-            setHolesize({ error: false, helperText: '', value: 0 });
+        if (parseInt(e) > 100000) {
+            setHolesize(100000);
+            return;
         }
-        if (e > 100000) {
-            setHolesize({ error: false, helperText: '', value: 100000 });
+        if (e.length > 1 && e[0] === '0') {
+            let withoutZero = e.substring(1);
+            setHolesize(withoutZero);
+            return;
         }
-        else {
-            setHolesize({ error: false, helperText: '', value: e });
-        }
+        setHolesize(parseInt(e));
+
     }
 
     return (
         <div>
             <Grid
                 container
-                spacing={2}
+                spacing={5}
                 justify="space-evenly"
                 alignItems="center">
                 <Grid item xs={6}>
@@ -89,30 +95,27 @@ export default function Mask(props) {
                 </Grid>
 
                 <Grid item xs={4}>
-                <FormLabel component="legend">Source date</FormLabel>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <KeyboardDatePicker
-                        disableToolbar
-                        variant="inline"
-                        format="dd/MM/yyyy"
-                        margin="normal"
-                        id="date-picker-inline"
+                    <FormLabel component="legend">Source date</FormLabel>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                            disableToolbar
+                            variant="inline"
+                            format="dd/MM/yyyy"
+                            margin="normal"
+                            id="date-picker-inline"
+                            value={sourceDate}
+                            onChange={handleChangeSourceDate}
 
-                        value={sourceDate}
-                        onChange={handleChangeSourceDate}
-
-                    />
+                        />
                     </MuiPickersUtilsProvider>
                 </Grid>
 
                 <Grid item xs={6}>
+                    <FormLabel component="legend">Feather</FormLabel>
                     <TextField
-                        error={feather.error}
-                        helperText={feather.helperText}
-                        value={feather.value}
+                        value={feather}
                         onChange={e => handleChangeFeather(e.target.value)}
                         id="feather"
-                        label="Feather"
                         variant="outlined"
                         size='small'
                         type='number'
@@ -121,13 +124,11 @@ export default function Mask(props) {
                     />
                 </Grid>
                 <Grid item xs={6}>
+                    <FormLabel component="legend">Hole size</FormLabel>
                     <TextField
-                        error={holesize.error}
-                        helperText={holesize.helperText}
-                        value={holesize.value}
+                        value={holesize}
                         onChange={e => handleChangeHolesize(e.target.value)}
                         id="holesize"
-                        label="Holesize"
                         variant="outlined"
                         size='small'
                         type='number'
@@ -136,6 +137,7 @@ export default function Mask(props) {
                     />
                 </Grid>
             </Grid>
+            {/* TODO: center button */}
             <Button
                 variant='contained'
                 startIcon={<Done />}

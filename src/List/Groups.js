@@ -15,6 +15,7 @@ export default React.memo(function Groups(props) {
     }, [dataFromStore])
 
     const onDragEnd = result => {
+        console.log(result);
         const { destination, source, draggableId } = result;
 
         if (!destination) {
@@ -52,6 +53,7 @@ export default React.memo(function Groups(props) {
                     [newGroup.id]: newGroup,
                 }
             }
+            // TODO : check order of render
             // The layers render from the begin to end so we should reverse it.
             const layerChanged = groupLayerStart.removeAt(groupLayerStartLength - source.index - 1);
             groupLayerStart.insertAt(groupLayerStartLength - destination.index - 1, layerChanged);

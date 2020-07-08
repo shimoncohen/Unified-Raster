@@ -47,7 +47,7 @@ export function addLayersToMap(map, layers) {
         const layerGroupLayers = layerGroup.getLayers();
         let layer;
         itemsIds.forEach(itemId => {
-            debugger;
+           
             const item = layers.items[itemId];
             layer = new OlLayerImage({
                 name: item.name,

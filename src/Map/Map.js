@@ -55,7 +55,7 @@ function App() {
     const [visible, setVisible] = useState(false);
     const [gotData, setGotData] = useState(false);
     const dataFromStore = useSelector(state => state.data);
-
+    // TODO : move to store
     useEffect(() => {
 
         if (dataFromStore.selected) {
@@ -122,15 +122,15 @@ function App() {
                 onClose={toggleDrawer}
                 open={visible}
                 variant="persistent"
-                classes= {{
+                classes={{
                     paper: 'paperDrawer'
                 }}
             >
-            <div>
-                <IconButton onClick={toggleDrawer}><Close /> </IconButton>
-            </div>
-            <ProjectSelector />
-            <Groups map={map} />
+                <div>
+                    <IconButton onClick={toggleDrawer}><Close /> </IconButton>
+                </div>
+                <ProjectSelector />
+                <Groups map={map} />
             </Drawer>
 
         </div >
