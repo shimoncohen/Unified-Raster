@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import Dialog from '@material-ui/core/Dialog';
+import {Dialog,Box} from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
 
 import Crop from '../Crop/Crop'
 import Mask from '../Mask/Mask';
@@ -29,7 +28,7 @@ export default function SettingsTabs(props) {
             <div className={classes.root}>
                 <Tabs
                     centered
-                    
+
                     value={value}
                     onChange={handleChange}
                     aria-label="Vertical tabs example"
@@ -42,7 +41,15 @@ export default function SettingsTabs(props) {
                     <Crop item={props} />
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    <Mask />
+                    {
+                    /*check if resource have mask */
+                    !props.item.mask.no_mask ?
+                        <Mask item={props.item} />
+                        :
+                        <Box display="flex" alignItems="center" justifyContent="center">
+                        This resource doesn't have mask
+                        </Box>
+                    }
                 </TabPanel>
             </div>
 
@@ -63,11 +70,11 @@ function TabPanel(props) {
             aria-labelledby={`vertical-tab-${index}`}
             {...other}
         >
-            
-                <Box p={3} hidden={value !== index}>
-                    {children}
-                </Box>
-            
+
+            <Box p={3} hidden={value !== index}>
+                {children}
+            </Box>
+
         </div>
     );
 }

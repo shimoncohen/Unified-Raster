@@ -86,7 +86,7 @@ export default React.memo(function Item(props) {
 
             </ExpansionPanelDetails>
         </ExpansionPanel>
-        <SettingsTabs itemId={item.name} src={item.uri} extent={item.extent} open={open} close={handleCloseDialog} />
+        <SettingsTabs itemId={item.name} item={item} src={item.uri} extent={item.extent} open={open} close={handleCloseDialog} />
         </div>
     :
     <div
