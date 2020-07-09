@@ -15,13 +15,19 @@ const useStyles = makeStyles({
 
 export default function Mask(props) {
     const classes = useStyles();
-    const [feather, setFeather] = useState(0);
-    const [holesize, setHolesize] = useState(0);
-    const [band, setBand] = useState('1');
-    const [whiteFill, setWhiteFill] = useState(false);
-    const [sourceDate, setSourceDate] = useState(new Date());
+    const [feather, setFeather] = useState(props.item.mask.feather);
+    const [holesize, setHolesize] = useState(props.item.mask.hole_size);
+    const [tolerance, setTolerance] = useState(props.item.mask.threshold); // TODO: should be tolerance
+    const [band, setBand] = useState(props.item.mask.band.toString());
+    const [whiteFill, setWhiteFill] = useState(props.item.mask.white_fill === 1 ? true : false);
+    const [sourceDate, setSourceDate] = useState(props.item.takenAt);
 
     const dispatch = useDispatch();
+
+    useEffect(()=>{
+
+
+    },[feather,holesize,tolerance,band,whiteFill,sourceDate])
 
     const handleChangeBand = e => {
         setBand(e.target.value);
@@ -71,30 +77,34 @@ export default function Mask(props) {
 
     }
 
+    const handleChangeTolerance = e => {
+        if (e === '' || parseInt(e) < 0) {
+            setTolerance(0);
+            return;
+        }
+        if (parseInt(e) > 255) {
+            setTolerance(255);
+            return;
+        }
+        if (e.length > 1 && e[0] === '0') {
+            let withoutZero = e.substring(1);
+            setTolerance(withoutZero);
+            return;
+        }
+        setTolerance(parseInt(e));
+
+    }
+
     return (
         <div>
             <Grid
                 container
                 spacing={5}
-                justify="space-evenly"
-                alignItems="center">
+                justify="center"
+                alignItems="center"
+            >
+
                 <Grid item xs={6}>
-                    <FormLabel component="legend">Band</FormLabel>
-                    <RadioGroup row aria-label="band" value={band} className={classes.band} onChange={handleChangeBand}>
-                        <FormControlLabel value="0" control={<Radio />} label="Red" />
-                        <FormControlLabel value="1" control={<Radio />} label="Green" />
-                        <FormControlLabel value="2" control={<Radio />} label="Blue" />
-                    </RadioGroup>
-                </Grid>
-
-                <Grid item xs={2}>
-                    <FormLabel component="legend">White fill</FormLabel>
-                    <FormControlLabel
-                        control={<Switch checked={whiteFill} onChange={handleChangeWhiteFill} name="whileFill" />}
-                    />
-                </Grid>
-
-                <Grid item xs={4}>
                     <FormLabel component="legend">Source date</FormLabel>
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <KeyboardDatePicker
@@ -111,6 +121,15 @@ export default function Mask(props) {
                 </Grid>
 
                 <Grid item xs={6}>
+                    <FormLabel component="legend">Band</FormLabel>
+                    <RadioGroup row aria-label="band" value={band} className={classes.band} onChange={handleChangeBand}>
+                        <FormControlLabel value="0" control={<Radio />} label="Red" />
+                        <FormControlLabel value="1" control={<Radio />} label="Green" />
+                        <FormControlLabel value="2" control={<Radio />} label="Blue" />
+                    </RadioGroup>
+                </Grid>
+
+                <Grid item xs={6}>
                     <FormLabel component="legend">Feather</FormLabel>
                     <TextField
                         value={feather}
@@ -123,6 +142,7 @@ export default function Mask(props) {
                         fullWidth
                     />
                 </Grid>
+
                 <Grid item xs={6}>
                     <FormLabel component="legend">Hole size</FormLabel>
                     <TextField
@@ -136,16 +156,41 @@ export default function Mask(props) {
                         fullWidth
                     />
                 </Grid>
+
+                <Grid item xs={6}>
+                    <FormLabel component="legend">Tolerance</FormLabel>
+                    <TextField
+                        value={tolerance}
+                        onChange={e => handleChangeTolerance(e.target.value)}
+                        id="tolerance"
+                        variant="outlined"
+                        size='small'
+                        type='number'
+                        required={true}
+                        fullWidth
+                    />
+                </Grid>
+
+                <Grid item xs={6}>
+                    <FormLabel component="legend">White fill</FormLabel>
+                    <FormControlLabel
+                        control={<Switch checked={whiteFill} onChange={handleChangeWhiteFill} name="whileFill" />}
+                    />
+                </Grid>
+
+                <Grid item xs={12} style={{textAlign:'center'}}>
+                    <Button
+                        variant='contained'
+                        startIcon={<Done />}
+                        color="primary"
+                        onClick={() => console.log('ff')}
+                    >
+                        Update
+                    </Button>
+                </Grid>
+
             </Grid>
-            {/* TODO: center button */}
-            <Button
-                variant='contained'
-                startIcon={<Done />}
-                color="primary"
-                onClick={() => console.log('ff')}
-            >
-                Update
-               </Button>
+
 
 
         </div>
