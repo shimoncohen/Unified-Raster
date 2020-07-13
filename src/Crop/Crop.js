@@ -58,7 +58,7 @@ export default function Crop(props) {
 
         const newExtent = createNewExtent();
         const newImg = getCroppedImg(imgRef.current, crop, 'cropped');
-        dispatch({ type: 'cropLayer', payload: { id: itemId, newUri: newImg, newExtent } });
+        dispatch({ type: 'CROP_LAYER', payload: { id: itemId, newUri: newImg, newExtent } });
         // TODO:  add snackbar
         // TODO: connect to redux
     };

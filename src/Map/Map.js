@@ -95,7 +95,7 @@ function App() {
     }, [dataFromStore]);
 
     useEffect(() => {
-        dispatch({ type: 'addMap', payload: { map } });
+        dispatch({ type: 'ADD_MAP', payload: { map } });
         console.log(map.getLayers());
     }, [map])
 
