@@ -94,7 +94,7 @@ export default React.memo(function Groups(props) {
         }
 
         setData(newData);
-        dispatch({ type: 'updateStore', payload: newData });
+        dispatch({ type: 'UPDATE_STORE', payload: newData });
     }
 
     return (

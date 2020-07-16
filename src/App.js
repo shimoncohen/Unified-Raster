@@ -28,7 +28,7 @@ function App() {
     try {
       const res = await Axios.get(Config.urlGetProjectByName + projectName);
       console.log(res);
-      dispatch({ type: 'initStore', payload: res.data.latest.resources });
+      dispatch({ type: 'INIT_STORE', payload: res.data.latest.resources });
     }
     catch{
       enqueueSnackbar('There is a problem in our server, please try again later', { variant: 'error' });

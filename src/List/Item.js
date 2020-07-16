@@ -30,12 +30,12 @@ export default React.memo(function Item(props) {
     }, [itemDetails])
 
     const handleCheckboxClick = () => {
-        dispatch({ type: 'checkClickOnItem', payload: { id: item.name } });
+        dispatch({ type: 'TOOGLE_ITEM', payload: { id: item.name } });
     }
 
     const handleSelectItem = e => {
         e.stopPropagation();
-        dispatch({ type: 'selectItem', payload: { id: item.name } });
+        dispatch({ type: 'SELECT_ITEM', payload: { id: item.name } });
     }
 
     const handleOpenDialog = () => {
@@ -48,7 +48,7 @@ export default React.memo(function Item(props) {
 
 
     const handleZoomToLayer = () => {
-        dispatch({ type: 'zoomToLayer', payload: { id: item.name } });
+        dispatch({ type: 'ZOOM_TO_LAYER', payload: { id: item.name } });
     }
 
     return (

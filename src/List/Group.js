@@ -26,7 +26,7 @@ export default React.memo(function Group(props) {
     const [initial, setInitial] = useState(true);
     const dispatch = useDispatch();
     const handleCheckboxClick = () => {
-        dispatch({ type: 'checkClickOnGroup', payload: { id: props.group.id } });
+        dispatch({ type: 'TOOGLE_GROUP', payload: { id: props.group.id } });
     }
 
     useEffect(() => {

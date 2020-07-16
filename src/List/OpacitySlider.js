@@ -72,7 +72,7 @@ export default function CustomizedSlider(props) {
     const handleChange = (e, newValue) => {
         if (newValue !== opacity) {
             setOpacity(newValue);
-            dispatch({ type: 'opacityChange', payload: { id: props.item.name, opacity: newValue } });
+            dispatch({ type: 'OPACITY_CHANGE', payload: { id: props.item.name, opacity: newValue } });
         }
     }
 
