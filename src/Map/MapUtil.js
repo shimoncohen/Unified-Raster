@@ -3,7 +3,8 @@ import Static from 'ol/source/ImageStatic';
 import OlLayerTile from 'ol/layer/Tile';
 import OlSourceOsm from 'ol/source/OSM';
 import OlLayerGroup from 'ol/layer/Group';
-
+import mapConfig from './MapConfig';
+import MapConfig from './MapConfig';
 
 export function getLayerByName(map, name) {
     const mapLayers = map.getLayerGroup().getLayersArray();
@@ -53,7 +54,7 @@ export function addLayersToMap(map, layers) {
                 name: item.name,
                 source: new Static({
                     url: item.uri,
-                    projection: 'EPSG:4326',
+                    projection: MapConfig.DEFAULT_PROJECTION,
                     imageExtent: item.extent,
                     crossOrigin: "Anonymous"
                 })

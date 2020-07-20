@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { MapCenter } from './MapConfig';
+import MapConfig from './MapConfig';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlLayerTile from 'ol/layer/Tile';
@@ -30,7 +30,6 @@ import 'ol/ol.css';
 import 'antd/dist/antd.css';
 import './react-geo.css';
 
-const center = MapCenter;
 const osm = new OlLayerTile({
     source: new OlSourceOsm(),
     name: 'OSM'
@@ -42,9 +41,8 @@ const layerGroupOsm = new OlLayerGroup({
 
 const map = new OlMap({
     view: new OlView({
-        center: center,
-        // TODO : Add to config
-        projection: 'EPSG:4326',
+        center: MapConfig.MAP_CENTER,
+        projection: MapConfig.DEFAULT_PROJECTION,
         zoom: 5,
     }),
     layers: [layerGroupOsm]
@@ -82,7 +80,7 @@ function App() {
                     className: 'layerHover',
                     source: new Static({
                         url: layer.getSource().getUrl(),
-                        projection: 'EPSG:4326',
+                        projection: MapConfig.DEFAULT_PROJECTION,
                         imageExtent: layer.getSource().getImageExtent()
                     })
                 });
