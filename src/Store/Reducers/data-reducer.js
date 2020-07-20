@@ -115,6 +115,7 @@ export default (state = defaultState, action) => {
             return produce(state, draft => {
                 draft.data.items[action.payload.id].newUri = action.payload.newUri;
                 draft.data.items[action.payload.id].newExtent = action.payload.newExtent;
+                draft.data.items[action.payload.id].lastCrop = action.payload.crop;
                 const layer = getLayerByName(state.map, action.payload.id);
                 const newSource = new Static({
                     url: action.payload.newUri,
