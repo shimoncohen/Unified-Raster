@@ -131,6 +131,18 @@ export default (state = defaultState, action) => {
             return state;
         }
 
+        case 'UPDATE_MASK':{
+            return produce(state,draft => {
+                draft.data.items[action.payload.name].mask.feather = action.payload.feather;
+                draft.data.items[action.payload.name].mask.hole_size = action.payload.holesize;
+                // TODO: should betolerance
+                draft.data.items[action.payload.name].mask.threshold = action.payload.tolerance;
+                draft.data.items[action.payload.name].mask.band = parseInt(action.payload.band);
+                draft.data.items[action.payload.name].mask.white_fill = ~~action.payload.whiteFill;
+                draft.data.items[action.payload.name].takenAt = action.payload.sourceDate;
+            });
+        }
+
         default:
             return state;
     }

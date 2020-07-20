@@ -24,10 +24,10 @@ export default function Mask(props) {
 
     const dispatch = useDispatch();
 
-    useEffect(()=>{
+    useEffect(() => {
 
 
-    },[feather,holesize,tolerance,band,whiteFill,sourceDate])
+    }, [feather, holesize, tolerance, band, whiteFill, sourceDate])
 
     const handleChangeBand = e => {
         setBand(e.target.value);
@@ -93,6 +93,10 @@ export default function Mask(props) {
         }
         setTolerance(parseInt(e));
 
+    }
+
+    const updateMask = () => {
+        dispatch({ type: 'UPDATE_MASK', payload: { name:props.item.name, feather, holesize, tolerance, band, whiteFill, sourceDate } });
     }
 
     return (
@@ -178,12 +182,12 @@ export default function Mask(props) {
                     />
                 </Grid>
 
-                <Grid item xs={12} style={{textAlign:'center'}}>
+                <Grid item xs={12} style={{ textAlign: 'center' }}>
                     <Button
                         variant='contained'
                         startIcon={<Done />}
                         color="primary"
-                        onClick={() => console.log('ff')}
+                        onClick={() => updateMask()}
                     >
                         Update
                     </Button>
