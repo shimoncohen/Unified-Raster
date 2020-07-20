@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Grid, RadioGroup, Radio, FormControlLabel, FormLabel, Switch } from '@material-ui/core/'
 import Done from '@material-ui/icons/Done'
 import { useDispatch } from 'react-redux';
@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
+import { useSnackbar } from 'notistack'
 
 const useStyles = makeStyles({
     band: {
@@ -14,6 +15,7 @@ const useStyles = makeStyles({
 });
 
 export default function Mask(props) {
+    const { enqueueSnackbar } = useSnackbar();
     const classes = useStyles();
     const [feather, setFeather] = useState(props.item.mask.feather);
     const [holesize, setHolesize] = useState(props.item.mask.hole_size);
@@ -97,6 +99,7 @@ export default function Mask(props) {
 
     const updateMask = () => {
         dispatch({ type: 'UPDATE_MASK', payload: { name:props.item.name, feather, holesize, tolerance, band, whiteFill, sourceDate } });
+        enqueueSnackbar('Mask updated successfully', { variant: 'success' });
     }
 
     return (
