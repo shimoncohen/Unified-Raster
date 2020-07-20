@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useSnackbar } from 'notistack'
-import { Done, PhotoLibrary, Photo, Save } from '@material-ui/icons/'
+import { useSnackbar } from 'notistack';
+import { Done, PhotoLibrary, Photo, Save } from '@material-ui/icons/';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetProjects } from '../General/Requests';
@@ -14,6 +14,7 @@ import TreeView from '@material-ui/lab/TreeView';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
+import pathUtil from 'path';
 
 
 const useStyles = makeStyles({
@@ -37,16 +38,16 @@ export default function ProjectSelector(props) {
         <TreeItem key={nodes.path} nodeId={nodes.path} label={nodes.path.substring(nodes.path.lastIndexOf('/') + 1)} onClick={() => { getProjectsFromServer(nodes.path); }}>
             {Array.isArray(nodes.projects) ? renderItems(nodes.path, nodes.projects) : null}
             {Array.isArray(nodes.directories) ? nodes.directories.map((node) => renderTree({
-                'path': nodes.path + '/' + node,
-                'directories': projects[nodes.path + '/' + node] ? projects[nodes.path + '/' + node].directories : null,
-                'projects': projects[nodes.path + '/' + node] ? projects[nodes.path + '/' + node].projects : null
+                'path': pathUtil.join(nodes.path, node),
+                'directories': projects[pathUtil.join(nodes.path, node)] ? projects[pathUtil.join(nodes.path, node)].directories : null,
+                'projects': projects[pathUtil.join(nodes.path, node)] ? projects[pathUtil.join(nodes.path, node)].projects : null
             })) : null}
         </TreeItem>
     );
 
     const renderItems = (path, items) => {
         return (
-            items.map((item) => <TreeItem selected={projectName === path + '/' + item} key={path + '/' + item} nodeId={path + '/' + item} label={item} onClick={() => handleClickOnList(path + '/' + item)}>
+            items.map((item) => <TreeItem selected={projectName === pathUtil.join(path, item)} key={pathUtil.join(path, item)} nodeId={pathUtil.join(path, item)} label={item} onClick={() => handleClickOnList(pathUtil.join(path, item))}>
             </TreeItem>)
         )
     }
@@ -54,7 +55,6 @@ export default function ProjectSelector(props) {
     const getProjectsFromServer = async (path) => {
         // Get projects from the server.
         try {
-            debugger;
             if (path && projects[path]) {
                 return;
             }
