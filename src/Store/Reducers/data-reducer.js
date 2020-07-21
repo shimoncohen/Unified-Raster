@@ -28,6 +28,7 @@ export default (state = defaultState, action) => {
                         'name=' + resource.name + '&version=' + resource.version;
                     resource.checked = true;
                     resource.selected = false;
+                    resource.opacity = 100;
                     resource.extent = makeCoordinatesArrayFromString(resource.extent);
                     items[resource.name] = resource;
                     if (!groups['level-' + resource.level]) {

@@ -66,7 +66,7 @@ const PrettoSlider = withStyles({
 
 export default function CustomizedSlider(props) {
     const classes = useStyles();
-    const [opacity, setOpacity] = useState(100);
+    const [opacity, setOpacity] = useState(props.item.opacity);
     const dispatch = useDispatch();
 
     const handleChange = (e, newValue) => {
