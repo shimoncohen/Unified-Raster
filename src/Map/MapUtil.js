@@ -39,6 +39,17 @@ export function setVisibleGroup(map, groupName, visibility) {
 export function addLayersToMap(map, layers) {
     const mapLayers = map.getLayers();
 
+    const osm = new OlLayerTile({
+        source: new OlSourceOsm(),
+        name: 'OSM'
+    })
+    const layerGroupOsm = new OlLayerGroup({
+        name: 'OSM',
+        layers: [osm]
+    });
+
+    mapLayers.push(layerGroupOsm);
+
     layers.groupsOrder.forEach(groupId => {
         const itemsIds = layers.groups[groupId].itemsIds;
         const layerGroup = new OlLayerGroup({
