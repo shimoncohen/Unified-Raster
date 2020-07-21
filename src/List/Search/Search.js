@@ -29,7 +29,7 @@ export default function Search(props) {
         console.log('in');
     }, [searchResults]);
 
-    // Search for every keystroke the user inserts
+    //Search for every keystroke the user inserts
     // useEffect(() => {
     //     // Set to no results if empty search
     //     if(searchText === '') {
@@ -43,8 +43,6 @@ export default function Search(props) {
     const search = async () => {
         try {
             const results = await searchFunction(searchText);
-            console.log(results);
-            console.log(model);
             setSearchResults(results[model + 's']);
         } catch (error) {
             console.error(error)
