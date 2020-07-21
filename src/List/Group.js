@@ -81,7 +81,7 @@ export default React.memo(function Group(props) {
                     label={props.group.title}
                 />
             </ExpansionPanelSummary>
-            <ExpansionPanelDetails onScroll={e => { handleScroll(e); }}>
+            <ExpansionPanelDetails style={{'min-height': '100px'}} onScroll={e => { handleScroll(e); }}>
                 {expanded &&
                     <Droppable droppableId={props.group.id}>
                         {provided => (
