@@ -60,7 +60,6 @@ export default (state = defaultState, action) => {
         // Fires when user select an item
         case 'SELECT_ITEM': {
             return produce(state, draft => {
-                // clear selected of last selected item
                 const lastSelectedItemId = Object.keys(draft.data.items).find(
                     itemId => { return draft.data.items[itemId].selected });
                 if (lastSelectedItemId) {
@@ -72,7 +71,6 @@ export default (state = defaultState, action) => {
                 if (lastSelectedItemId !== action.payload.id) {
                     addHoverLayer(state.map,action.payload.id);
                     draft.data.items[action.payload.id].selected = true;
-                    draft.selected = action.payload.id;
                 }
             });
         }
