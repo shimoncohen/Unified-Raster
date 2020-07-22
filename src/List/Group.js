@@ -15,7 +15,7 @@ width:100%;
 overflow:auto; `;
 const InnerList = React.memo(function list(props) {
     return (
-        props.items.map((item, index) => <Item key={index} item={item} index={index} />)
+        props.items.map((item, index) => <Item key={item} item={item} index={index} />)
     );
 });
 

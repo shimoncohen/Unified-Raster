@@ -33,5 +33,6 @@ export function prepareResourceForDisplay(resource) {
                     '&version=' + resource.version;
     resource.checked = true;
     resource.selected = false;
+    resource.opacity = 100;
     resource.extent = makeCoordinatesArrayFromString(resource.extent);
 }

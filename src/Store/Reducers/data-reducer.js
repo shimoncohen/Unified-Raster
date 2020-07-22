@@ -1,6 +1,6 @@
 import produce from 'immer';
 import cloneDeep from 'lodash/cloneDeep';
-import { clearMap, addBaseLayer, getLayerByName, addLayersToMap, getHoverLayer, setVisibleGroup } from '../../Map/MapUtil';
+import { clearMap, addBaseLayer, getLayerByName, addHoverLayer, addLayersToMap, getHoverLayer, setVisibleGroup } from '../../Map/MapUtil';
 import Static from 'ol/source/ImageStatic';
 // import Config from '../../General/Config';
 import { addToGroups, removeFromGroups, prepareResourceForDisplay } from '../../util/mapDataUtil';
@@ -64,15 +64,17 @@ export default (state = defaultState, action) => {
                 const lastSelectedItemId = Object.keys(draft.data.items).find(
                     itemId => { return draft.data.items[itemId].selected });
                 if (lastSelectedItemId) {
+                    const layerToDelete = getHoverLayer(state.map);
+                    state.map.removeLayer(layerToDelete);
                     draft.data.items[lastSelectedItemId].selected = false;
                 }
 
                 if (lastSelectedItemId !== action.payload.id) {
+                    addHoverLayer(state.map,action.payload.id);
                     draft.data.items[action.payload.id].selected = true;
                     draft.selected = action.payload.id;
                 }
-
-            })
+            });
         }
 
         // Fires when user click on item check (make item visible or not)
@@ -87,8 +89,10 @@ export default (state = defaultState, action) => {
 
         case 'OPACITY_CHANGE': {
             const layer = getLayerByName(state.map, action.payload.id);
+
             layer.setOpacity(action.payload.opacity / 100);
-            const hoveredLayer = getLayerByName(state.map, action.payload.id + 'hover');
+            const hoveredLayer = getLayerByName(state.map, action.payload.id + ' hover');
+
             if (hoveredLayer) {
                 hoveredLayer.setOpacity(action.payload.opacity / 100);
             }
@@ -112,14 +116,14 @@ export default (state = defaultState, action) => {
             });
         }
 
-        case 'ZOOM_TO_LAYER':{
+        case 'ZOOM_TO_LAYER': {
             const layer = getLayerByName(state.map, action.payload.id);
             state.map.getView().fit(layer.getSource().getImageExtent(), { duration: 1000 });
             return state;
         }
 
-        case 'UPDATE_MASK':{
-            return produce(state,draft => {
+        case 'UPDATE_MASK': {
+            return produce(state, draft => {
                 draft.data.items[action.payload.name].mask.feather = action.payload.feather;
                 draft.data.items[action.payload.name].mask.hole_size = action.payload.holesize;
                 // TODO: should betolerance
@@ -166,7 +170,7 @@ export default (state = defaultState, action) => {
                 const groupsOrder = Object.keys(groups).sort((a, b) =>
                     groups[a].level > groups[b].level
                 );
-                
+
                 draft.data = { items, groups, groupsOrder };
                 clearMap(draft.map);
                 addBaseLayer(draft.map);

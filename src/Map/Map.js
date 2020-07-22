@@ -51,46 +51,6 @@ const map = new OlMap({
 function App() {
     const dispatch = useDispatch();
     const [visible, setVisible] = useState(false);
-    const [gotData, setGotData] = useState(false);
-    const dataFromStore = useSelector(state => state.data);
-    // TODO : move to store
-    useEffect(() => {
-
-        if (dataFromStore.selected) {
-            const layer = getLayerByName(map, dataFromStore.selected);
-            const layerToDelete = getHoverLayer(map);
-            if (layerToDelete) {
-                map.removeLayer(layerToDelete);
-                if (layerToDelete.get('name') === dataFromStore.selected + ' hover') {
-                    dispatch({ type: 'clearSelected' });
-
-                    return;
-                }
-            }
-
-            if (layer instanceof OlLayerTile) {
-                dispatch({ type: 'clearSelected' });
-
-                return;
-            }
-            else {
-                const newLayerWithHover = new OlLayerImage({
-                    name: layer.get('name') + ' hover',
-                    opacity: 1,
-                    className: 'layerHover',
-                    source: new Static({
-                        url: layer.getSource().getUrl(),
-                        projection: MapConfig.DEFAULT_PROJECTION,
-                        imageExtent: layer.getSource().getImageExtent()
-                    })
-                });
-                map.getLayers().push(newLayerWithHover);
-            }
-            dispatch({ type: 'clearSelected' });
-
-        }
-
-    }, [dataFromStore]);
 
     useEffect(() => {
         dispatch({ type: 'ADD_MAP', payload: { map } });
