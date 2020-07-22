@@ -16,7 +16,18 @@ export function addToGroups(groups, resource) {
     }
 }
 
-export function prepareResourceForDIsplay(resource) {
+export function removeFromGroups(groups, resource) {
+    const group = groups[resource.level];
+    const itemIds = group.itemsIds;
+    itemIds.remove(resource.name);
+
+    // remove group if it's empty
+    if(itemIds.length() == 0) {
+        delete group;
+    }
+}
+
+export function prepareResourceForDisplay(resource) {
     resource.uri = Config.urlThumbnail +
                     'name=' + resource.name + 
                     '&version=' + resource.version;

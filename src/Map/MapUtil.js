@@ -54,6 +54,22 @@ export function addBaseLayer(map) {
     mapLayers.push(layerGroupOsm);
 }
 
+function addResourceToLayerGroup(layer, resource) {
+
+}
+
+// export function addResourceToMap(map, resource) {
+//     const mapLayers = map.getLayers();
+//     const groupId = 'level-' + resource.level;
+//     const layer = mapLayers.getArray().filter(
+//         (layer) => {
+//             debugger;
+//             return layer.getLayers() == groupId;
+//         }
+//     );
+//     console.log(layer);
+// }
+
 // add layers to map in the initial state
 export function addLayersToMap(map, layers) {
     const mapLayers = map.getLayers();
@@ -85,6 +101,5 @@ export function addLayersToMap(map, layers) {
         mapLayers.push(layerGroup);
     });
     console.log(map.getLayers());
-
 }
 

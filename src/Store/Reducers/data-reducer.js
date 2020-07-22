@@ -3,7 +3,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { clearMap, addBaseLayer, getLayerByName, addLayersToMap, getHoverLayer, setVisibleGroup } from '../../Map/MapUtil';
 import Static from 'ol/source/ImageStatic';
 // import Config from '../../General/Config';
-import { addToGroups, prepareResourceForDIsplay } from '../../util/mapDataUtil';
+import { addToGroups, removeFromGroups, prepareResourceForDisplay } from '../../util/mapDataUtil';
 // import { makeCoordinatesArrayFromString } from '../../General/Logic';
 let defaultState = {
     data: null,
@@ -22,23 +22,18 @@ export default (state = defaultState, action) => {
                 const items = {};
                 // convert data from the server for open layers and react dnd
                 resources.forEach(resource => {
-                    // resource.uri = Config.urlThumbnail +
-                    //     'name=' + resource.name + '&version=' + resource.version;
-                    // resource.checked = true;
-                    // resource.selected = false;
-                    // resource.extent = makeCoordinatesArrayFromString(resource.extent);
-                    prepareResourceForDIsplay(resource);
+                    prepareResourceForDisplay(resource);
                     items[resource.name] = resource;
-                    
                     addToGroups(groups, resource);
                 });
+                // set the order of the groups by thier level
                 const groupsOrder = Object.keys(groups).sort((a, b) =>
                     groups[a].level > groups[b].level
                 );
                 draft.data = { items, groups, groupsOrder };
-                clearMap(state.map);
-                addBaseLayer(state.map);
-                addLayersToMap(state.map, draft.data);
+                clearMap(draft.map);
+                addBaseLayer(draft.map);
+                addLayersToMap(draft.map, draft.data);
             });
 
         // Fires when a user changes the order of items    
@@ -135,20 +130,48 @@ export default (state = defaultState, action) => {
             });
         }
 
-        // case 'ADD_RESOURCE':
-        //     return produce(state, draft => {
-        //         resource = action.payload;
-        //         layers = state.map.getLayers();
-        //         groups = state.data['groups'];
+        case 'ADD_RESOURCE':
+            return produce(state, draft => {
+                const resource = action.payload;
+                const groups = state.data['groups'];
+                const items = state.data.items;
 
-        //         MapDataUtil.addToGroups(groups, resource);
+                prepareResourceForDisplay(resource);
+                items[resource.name] = resource;
+                addToGroups(groups, resource);
 
-        //     });
+                // set the order of the groups by thier level
+                const groupsOrder = Object.keys(groups).sort((a, b) =>
+                    groups[a].level > groups[b].level
+                );
+
+                draft.data = { items, groups, groupsOrder };
+                clearMap(draft.map);
+                addBaseLayer(draft.map);
+                addLayersToMap(draft.map, draft.data);
+            });
         
-        // case 'REMOVE_RESOURCE':
-        //     return produce(state, draft => {
+        case 'REMOVE_RESOURCE':
+            return produce(state, draft => {
+                const resource = action.payload;
+                const groups = state.data['groups'];
+                const items = state.data.items;
 
-        //     });
+                // remove from items
+                delete items[resource.name];
+                // remove from groups
+                removeFromGroups(groups, resource);
+
+                // set the order of the groups by thier level
+                const groupsOrder = Object.keys(groups).sort((a, b) =>
+                    groups[a].level > groups[b].level
+                );
+                
+                draft.data = { items, groups, groupsOrder };
+                clearMap(draft.map);
+                addBaseLayer(draft.map);
+                addLayersToMap(draft.map, draft.data);
+            });
 
         default:
             return state;
