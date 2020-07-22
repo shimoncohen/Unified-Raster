@@ -3,7 +3,6 @@ import Static from 'ol/source/ImageStatic';
 import OlLayerTile from 'ol/layer/Tile';
 import OlSourceOsm from 'ol/source/OSM';
 import OlLayerGroup from 'ol/layer/Group';
-import mapConfig from './MapConfig';
 import MapConfig from './MapConfig';
 
 export function getLayerByName(map, name) {
@@ -25,6 +24,21 @@ export function getHoverLayer(map) {
     return mapLayers.filter(layer =>
         layer.get('name').includes('hover')
     )[0];
+}
+
+export function addHoverLayer(map,name){
+    const layer = getLayerByName(map,name);
+    const newLayerWithHover = new OlLayerImage({
+        name: layer.get('name') + ' hover',
+        opacity: layer.getOpacity(),
+        className: 'layerHover',
+        source: new Static({
+            url: layer.getSource().getUrl(),
+            projection: MapConfig.DEFAULT_PROJECTION,
+            imageExtent: layer.getSource().getImageExtent()
+        })
+    });
+    map.getLayers().push(newLayerWithHover);
 }
 
 // set a visibility to a layer group
