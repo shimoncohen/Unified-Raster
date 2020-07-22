@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import Group from './Group';
 import { useSelector, useDispatch } from 'react-redux';
-import { getLayerByName, addLayersToMap, getHoverLayer, getLayerGroupByName } from '../Map/MapUtil';
+import { getLayerGroupByName } from '../Map/MapUtil';
 
 
 export default React.memo(function Groups(props) {

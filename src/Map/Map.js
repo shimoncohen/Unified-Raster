@@ -12,7 +12,7 @@ import Static from 'ol/source/ImageStatic';
 import ProjectSelector from '../List/ProjectSelector';
 
 import Groups from '../List/Groups';
-import { getLayerByName, addLayersToMap, getHoverLayer, setVisibleGroup } from './MapUtil';
+import { getLayerByName, getHoverLayer } from './MapUtil';
 
 import { Drawer, IconButton, Paper } from '@material-ui/core';
 import { Close } from '@material-ui/icons';

@@ -1,9 +1,10 @@
 import produce from 'immer';
 import cloneDeep from 'lodash/cloneDeep';
-import { getLayerByName, addLayersToMap, getHoverLayer, setVisibleGroup } from '../../Map/MapUtil';
+import { clearMap, addBaseLayer, getLayerByName, addLayersToMap, getHoverLayer, setVisibleGroup } from '../../Map/MapUtil';
 import Static from 'ol/source/ImageStatic';
-import Config from '../../General/Config';
-import { makeCoordinatesArrayFromString } from '../../General/Logic';
+// import Config from '../../General/Config';
+import { addToGroups, prepareResourceForDIsplay } from '../../util/mapDataUtil';
+// import { makeCoordinatesArrayFromString } from '../../General/Logic';
 let defaultState = {
     data: null,
     selected: null,
@@ -16,37 +17,27 @@ export default (state = defaultState, action) => {
         // Fires when data arrived from server
         case 'INIT_STORE':
             return produce(state, draft => {
-                console.log(state.map.getLayers());
-                state.map.getLayers().clear();
-                // TODO : Add open street map layer
                 const resources = action.payload;
                 const groups = {};
                 const items = {};
                 // convert data from the server for open layers and react dnd
                 resources.forEach(resource => {
-                    resource.uri = Config.urlThumbnail +
-                        'name=' + resource.name + '&version=' + resource.version;
-                    resource.checked = true;
-                    resource.selected = false;
-                    resource.extent = makeCoordinatesArrayFromString(resource.extent);
+                    // resource.uri = Config.urlThumbnail +
+                    //     'name=' + resource.name + '&version=' + resource.version;
+                    // resource.checked = true;
+                    // resource.selected = false;
+                    // resource.extent = makeCoordinatesArrayFromString(resource.extent);
+                    prepareResourceForDIsplay(resource);
                     items[resource.name] = resource;
-                    if (!groups['level-' + resource.level]) {
-                        groups['level-' + resource.level] = {
-                            id: 'level-' + resource.level,
-                            title: 'Level ' + resource.level,
-                            checked: true,
-                            level: resource.level,
-                            itemsIds: [resource.name]
-                        };
-                    }
-                    else {
-                        groups[resource.level].itemIds.push(resource.name);
-                    }
+                    
+                    addToGroups(groups, resource);
                 });
                 const groupsOrder = Object.keys(groups).sort((a, b) =>
                     groups[a].level > groups[b].level
                 );
                 draft.data = { items, groups, groupsOrder };
+                clearMap(state.map);
+                addBaseLayer(state.map);
                 addLayersToMap(state.map, draft.data);
             });
 
@@ -143,6 +134,21 @@ export default (state = defaultState, action) => {
                 draft.data.items[action.payload.name].takenAt = action.payload.sourceDate;
             });
         }
+
+        // case 'ADD_RESOURCE':
+        //     return produce(state, draft => {
+        //         resource = action.payload;
+        //         layers = state.map.getLayers();
+        //         groups = state.data['groups'];
+
+        //         MapDataUtil.addToGroups(groups, resource);
+
+        //     });
+        
+        // case 'REMOVE_RESOURCE':
+        //     return produce(state, draft => {
+
+        //     });
 
         default:
             return state;
