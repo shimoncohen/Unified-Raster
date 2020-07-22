@@ -17,13 +17,16 @@ export function addToGroups(groups, resource) {
 }
 
 export function removeFromGroups(groups, resource) {
-    const group = groups[resource.level];
-    const itemIds = group.itemsIds;
-    itemIds.remove(resource.name);
+    const group = groups['level-' + resource.level];
+    let itemIds = group.itemsIds;
+    // itemIds.remove(resource.name);
+    itemIds = itemIds.filter((id) => id !== resource.name);
+
+    group.itemsIds = itemIds;
 
     // remove group if it's empty
-    if(itemIds.length() == 0) {
-        delete group;
+    if(itemIds.length === 0) {
+        delete groups['level-' + resource.level];
     }
 }
 
@@ -35,4 +38,12 @@ export function prepareResourceForDisplay(resource) {
     resource.selected = false;
     resource.opacity = 100;
     resource.extent = makeCoordinatesArrayFromString(resource.extent);
+}
+
+export function setDraftData(draft, items, groups) {
+    // set the order of the groups by thier level
+    const groupsOrder = Object.keys(groups).sort((a, b) =>
+        groups[a].level > groups[b].level
+    );
+    draft.data = { items, groups, groupsOrder };
 }

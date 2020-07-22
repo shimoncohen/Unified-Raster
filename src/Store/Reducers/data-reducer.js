@@ -2,9 +2,8 @@ import produce from 'immer';
 import cloneDeep from 'lodash/cloneDeep';
 import { clearMap, addBaseLayer, getLayerByName, addHoverLayer, addLayersToMap, getHoverLayer, setVisibleGroup } from '../../Map/MapUtil';
 import Static from 'ol/source/ImageStatic';
-// import Config from '../../General/Config';
-import { addToGroups, removeFromGroups, prepareResourceForDisplay } from '../../util/mapDataUtil';
-// import { makeCoordinatesArrayFromString } from '../../General/Logic';
+import { addToGroups, removeFromGroups, prepareResourceForDisplay, setDraftData } from '../../util/mapDataUtil';
+import { setDraftMap, addResourceToMap, removeResourceFromMap } from '../../Map/MapUtil';
 let defaultState = {
     data: null,
     selected: null,
@@ -26,14 +25,10 @@ export default (state = defaultState, action) => {
                     items[resource.name] = resource;
                     addToGroups(groups, resource);
                 });
-                // set the order of the groups by thier level
-                const groupsOrder = Object.keys(groups).sort((a, b) =>
-                    groups[a].level > groups[b].level
-                );
-                draft.data = { items, groups, groupsOrder };
-                clearMap(draft.map);
-                addBaseLayer(draft.map);
-                addLayersToMap(draft.map, draft.data);
+
+                // set changes
+                setDraftData(draft, items, groups);
+                setDraftMap(draft);
             });
 
         // Fires when a user changes the order of items    
@@ -142,37 +137,27 @@ export default (state = defaultState, action) => {
                 items[resource.name] = resource;
                 addToGroups(groups, resource);
 
-                // set the order of the groups by thier level
-                const groupsOrder = Object.keys(groups).sort((a, b) =>
-                    groups[a].level > groups[b].level
-                );
+                setDraftData(draft, items, groups);
 
-                draft.data = { items, groups, groupsOrder };
-                clearMap(draft.map);
-                addBaseLayer(draft.map);
-                addLayersToMap(draft.map, draft.data);
+                addResourceToMap(state.map, resource);
+                // setDraftMap(draft);
             });
         
         case 'REMOVE_RESOURCE':
             return produce(state, draft => {
-                const resource = action.payload;
-                const groups = state.data['groups'];
-                const items = state.data.items;
+                const resource = action.payload.item;
+                const groups = draft.data['groups'];
+                const items = draft.data.items;
 
                 // remove from items
                 delete items[resource.name];
                 // remove from groups
                 removeFromGroups(groups, resource);
+                // remove from map
+                removeResourceFromMap(state.map, resource);
 
-                // set the order of the groups by thier level
-                const groupsOrder = Object.keys(groups).sort((a, b) =>
-                    groups[a].level > groups[b].level
-                );
-
-                draft.data = { items, groups, groupsOrder };
-                clearMap(draft.map);
-                addBaseLayer(draft.map);
-                addLayersToMap(draft.map, draft.data);
+                // save data changes
+                setDraftData(draft, items, groups);
             });
 
         default:
