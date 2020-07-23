@@ -156,6 +156,12 @@ export default (state = defaultState, action) => {
                 // remove from map
                 removeResourceFromMap(state.map, resource);
 
+                // check if should remove hover layer
+                const hoverLayer = getHoverLayer(state.map);
+                if(hoverLayer && hoverLayer.get('name') === resource.name + ' hover') {
+                    state.map.removeLayer(hoverLayer);
+                }
+
                 // save data changes
                 setDraftData(draft, items, groups);
             });
