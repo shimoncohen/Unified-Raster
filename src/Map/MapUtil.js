@@ -49,8 +49,11 @@ export function setVisibleGroup(map, groupName, visibility) {
 
 }
 
-// add layers to map in the initial state
-export function addLayersToMap(map, layers) {
+export function clearMap(map) {
+    map.getLayers().clear();
+}
+
+export function addBaseLayer(map) {
     const mapLayers = map.getLayers();
 
     const osm = new OlLayerTile({
@@ -63,6 +66,25 @@ export function addLayersToMap(map, layers) {
     });
 
     mapLayers.push(layerGroupOsm);
+}
+
+export function addResourceToMap(map, resource) {
+    const group = getLayerGroupByName();
+    const newLayer = new OlLayerImage({
+        name: resource.name,
+        source: new Static({
+            url: resource.uri,
+            projection: MapConfig.DEFAULT_PROJECTION,
+            imageExtent: resource.extent,
+            crossOrigin: "Anonymous"
+        })
+    });
+    map.getLayers().push(newLayer);
+}
+
+// add layers to map in the initial state
+export function addLayersToMap(map, layers) {
+    const mapLayers = map.getLayers();
 
     layers.groupsOrder.forEach(groupId => {
         const itemsIds = layers.groups[groupId].itemsIds;
@@ -91,6 +113,17 @@ export function addLayersToMap(map, layers) {
         mapLayers.push(layerGroup);
     });
     console.log(map.getLayers());
-
 }
 
+export function removeResourceFromMap(map, resource) {
+    const group = getLayerGroupByName(map, 'level-' + resource.level);
+    const layerToDelete = getLayerByName(map, resource.name);
+    const groupLayers = group.getLayers();
+    groupLayers.remove(layerToDelete);
+}
+
+export function setDraftMap(draft) {
+    clearMap(draft.map);
+    addBaseLayer(draft.map);
+    addLayersToMap(draft.map, draft.data);
+}

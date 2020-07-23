@@ -7,8 +7,9 @@ let defaultState = {
 export default (state = defaultState, action) => {
     switch (action.type) {
         case 'CHANGE_PROJECT':
-            state.projectName = action.payload.projectName;
-            return state;
+            return produce(state, draft => {
+                draft.projectName = action.payload.projectName;
+            });
         default:
             return state;
     }

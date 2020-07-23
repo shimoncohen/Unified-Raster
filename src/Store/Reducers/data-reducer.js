@@ -1,9 +1,9 @@
 import produce from 'immer';
 import cloneDeep from 'lodash/cloneDeep';
-import { getLayerByName, addLayersToMap, getHoverLayer, addHoverLayer, setVisibleGroup } from '../../Map/MapUtil';
+import { clearMap, addBaseLayer, getLayerByName, addHoverLayer, addLayersToMap, getHoverLayer, setVisibleGroup } from '../../Map/MapUtil';
 import Static from 'ol/source/ImageStatic';
-import Config from '../../General/Config';
-import { makeCoordinatesArrayFromString } from '../../General/Logic';
+import { addToGroups, removeFromGroups, prepareResourceForDisplay, setDraftData } from '../../util/mapDataUtil';
+import { setDraftMap, addResourceToMap, removeResourceFromMap } from '../../Map/MapUtil';
 let defaultState = {
     data: null,
     selected: null,
@@ -16,39 +16,19 @@ export default (state = defaultState, action) => {
         // Fires when data arrived from server
         case 'INIT_STORE':
             return produce(state, draft => {
-                console.log(state.map.getLayers());
-                state.map.getLayers().clear();
-                // TODO : Add open street map layer
                 const resources = action.payload;
                 const groups = {};
                 const items = {};
                 // convert data from the server for open layers and react dnd
                 resources.forEach(resource => {
-                    resource.uri = Config.urlThumbnail +
-                        'name=' + resource.name + '&version=' + resource.version;
-                    resource.checked = true;
-                    resource.selected = false;
-                    resource.opacity = 100;
-                    resource.extent = makeCoordinatesArrayFromString(resource.extent);
+                    prepareResourceForDisplay(resource);
                     items[resource.name] = resource;
-                    if (!groups['level-' + resource.level]) {
-                        groups['level-' + resource.level] = {
-                            id: 'level-' + resource.level,
-                            title: 'Level ' + resource.level,
-                            checked: true,
-                            level: resource.level,
-                            itemsIds: [resource.name]
-                        };
-                    }
-                    else {
-                        groups[resource.level].itemIds.push(resource.name);
-                    }
+                    addToGroups(groups, resource);
                 });
-                const groupsOrder = Object.keys(groups).sort((a, b) =>
-                    groups[a].level > groups[b].level
-                );
-                draft.data = { items, groups, groupsOrder };
-                addLayersToMap(state.map, draft.data);
+
+                // set changes
+                setDraftData(draft, items, groups);
+                setDraftMap(draft);
             });
 
         // Fires when a user changes the order of items    
@@ -102,10 +82,10 @@ export default (state = defaultState, action) => {
 
         case 'OPACITY_CHANGE': {
             const layer = getLayerByName(state.map, action.payload.id);
-            console.log(layer);
+
             layer.setOpacity(action.payload.opacity / 100);
             const hoveredLayer = getLayerByName(state.map, action.payload.id + ' hover');
-            console.log(hoveredLayer);
+
             if (hoveredLayer) {
                 hoveredLayer.setOpacity(action.payload.opacity / 100);
             }
@@ -146,6 +126,39 @@ export default (state = defaultState, action) => {
                 draft.data.items[action.payload.name].takenAt = action.payload.sourceDate;
             });
         }
+
+        case 'ADD_RESOURCE':
+            return produce(state, draft => {
+                const resource = action.payload;
+                const groups = state.data['groups'];
+                const items = state.data.items;
+
+                prepareResourceForDisplay(resource);
+                items[resource.name] = resource;
+                addToGroups(groups, resource);
+
+                setDraftData(draft, items, groups);
+
+                addResourceToMap(state.map, resource);
+                // setDraftMap(draft);
+            });
+        
+        case 'REMOVE_RESOURCE':
+            return produce(state, draft => {
+                const resource = action.payload.item;
+                const groups = draft.data['groups'];
+                const items = draft.data.items;
+
+                // remove from items
+                delete items[resource.name];
+                // remove from groups
+                removeFromGroups(groups, resource);
+                // remove from map
+                removeResourceFromMap(state.map, resource);
+
+                // save data changes
+                setDraftData(draft, items, groups);
+            });
 
         default:
             return state;
