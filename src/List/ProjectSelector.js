@@ -28,35 +28,37 @@ export default function ProjectSelector(props) {
   const [projects, setProjects] = useState(null);
   const lastProjectName = useSelector((state) => state.project.projectName);
 
-  const renderTree = (nodes) => (
-    <TreeItem
-      key={nodes.path}
-      nodeId={nodes.path}
-      label={nodes.path.substring(nodes.path.lastIndexOf("/") + 1)}
-      onClick={() => {
-        getProjectsFromServer(nodes.path);
-      }}
-    >
-      {Array.isArray(nodes.projects)
-        ? renderItems(nodes.path, nodes.projects)
-        : null}
-      {Array.isArray(nodes.directories)
-        ? nodes.directories.map((node) =>
-            renderTree({
-              path: pathUtil.join(nodes.path, node),
-              directories: projects[pathUtil.join(nodes.path, node)]
-                ? projects[pathUtil.join(nodes.path, node)].directories
-                : null,
-              projects: projects[pathUtil.join(nodes.path, node)]
-                ? projects[pathUtil.join(nodes.path, node)].projects
-                : null,
-            })
-          )
-        : null}
-    </TreeItem>
-  );
+  const renderTree = function (nodes) {
+    return (
+      <TreeItem
+        key={nodes.path}
+        nodeId={nodes.path}
+        label={nodes.path.substring(nodes.path.lastIndexOf("/") + 1)}
+        onClick={() => {
+          getProjectsFromServer(nodes.path);
+        }}
+      >
+        {Array.isArray(nodes.projects)
+          ? renderItems(nodes.path, nodes.projects)
+          : null}
+        {Array.isArray(nodes.directories)
+          ? nodes.directories.map((node) =>
+              renderTree({
+                path: pathUtil.join(nodes.path, node),
+                directories: projects[pathUtil.join(nodes.path, node)]
+                  ? projects[pathUtil.join(nodes.path, node)].directories
+                  : null,
+                projects: projects[pathUtil.join(nodes.path, node)]
+                  ? projects[pathUtil.join(nodes.path, node)].projects
+                  : null,
+              })
+            )
+          : null}
+      </TreeItem>
+    );
+  };
 
-  const renderItems = (path, items) => {
+  const renderItems = function (path, items) {
     return items.map((item) => (
       <TreeItem
         selected={projectName === pathUtil.join(path, item)}
@@ -68,7 +70,7 @@ export default function ProjectSelector(props) {
     ));
   };
 
-  const getProjectsFromServer = async (path) => {
+  const getProjectsFromServer = async function (path) {
     // Get projects from the server.
     try {
       if (path && projects[path]) {
@@ -97,15 +99,15 @@ export default function ProjectSelector(props) {
 
   useEffect(() => {}, [projects]);
 
-  const toggleDialog = () => {
+  const toggleDialog = function () {
     setOpen(!open);
   };
 
-  const handleClickOnList = (project) => {
+  const handleClickOnList = function (project) {
     setProjectName(project);
   };
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = function () {
     dispatch({ type: "CHANGE_PROJECT", payload: { projectName } });
     toggleDialog();
   };

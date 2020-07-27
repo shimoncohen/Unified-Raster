@@ -13,7 +13,7 @@ export default React.memo(function Groups(props) {
     setData(dataFromStore);
   }, [dataFromStore]);
 
-  const onDragEnd = (result) => {
+  const onDragEnd = function (result) {
     const { destination, source, draggableId } = result;
 
     if (!destination) {
@@ -113,9 +113,7 @@ export default React.memo(function Groups(props) {
     <DragDropContext onDragEnd={onDragEnd}>
       {data.groupsOrder.map((groupId) => {
         const group = data.groups[groupId];
-        //const items = group.itemsIds.map(itemId => data.items[itemId]);
         const items = group.itemsIds;
-
         return <Group key={group.id} group={group} items={items} />;
       })}
     </DragDropContext>

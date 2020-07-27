@@ -7,7 +7,6 @@ import { useSnackbar } from "notistack";
 import Config from "./General/Config";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -23,7 +22,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const projectName = useSelector((state) => state.project.projectName);
-  const getDataFromServer = async () => {
+  const getDataFromServer = async function () {
     // Get layers from the server and update store.
     try {
       const res = await Axios.get(Config.urlGetProjectByName + projectName);

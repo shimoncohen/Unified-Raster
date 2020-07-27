@@ -1,30 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import MapConfig from "./MapConfig";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
 import OlLayerTile from "ol/layer/Tile";
-import OlLayerImage from "ol/layer/Image";
 import OlSourceOsm from "ol/source/OSM";
-import OlSourceTileWMS from "ol/source/TileWMS";
 import OlLayerGroup from "ol/layer/Group";
-import Static from "ol/source/ImageStatic";
 import ProjectSelector from "../List/ProjectSelector";
-
 import Groups from "../List/Groups";
-import { getLayerByName, getHoverLayer } from "./MapUtil";
-
-import { Drawer, IconButton, Paper } from "@material-ui/core";
+import { Drawer, IconButton } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
-
-import {
-  SimpleButton,
-  MapComponent,
-  NominatimSearch,
-  MeasureButton,
-  LayerTree,
-  DigitizeButton,
-} from "@terrestris/react-geo";
+import { SimpleButton, MapComponent } from "@terrestris/react-geo";
 
 import "ol/ol.css";
 import "antd/dist/antd.css";
@@ -34,6 +20,7 @@ const osm = new OlLayerTile({
   source: new OlSourceOsm(),
   name: "OSM",
 });
+
 const layerGroupOsm = new OlLayerGroup({
   name: "OSM",
   layers: [osm],
@@ -56,7 +43,7 @@ function App() {
     dispatch({ type: "ADD_MAP", payload: { map } });
   }, [map]);
 
-  const toggleDrawer = () => {
+  const toggleDrawer = function () {
     setVisible(!visible);
   };
 

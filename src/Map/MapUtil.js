@@ -100,10 +100,8 @@ export function addLayersToMap(map, layers) {
           crossOrigin: "Anonymous",
         }),
       });
-      // layerGroupLayers.insertAt(0, layer);
       layerGroupLayers.push(layer);
     });
-    // mapLayers.insertAt(0, layerGroup);
     mapLayers.push(layerGroup);
   });
 }

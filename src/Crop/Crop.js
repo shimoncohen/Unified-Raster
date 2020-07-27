@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import Button from "@material-ui/core/Button";
@@ -39,12 +39,12 @@ export default function Crop(props) {
   const imageToCrop = useRef(null);
   let imgRef = useRef(null);
 
-  const onImageLoaded = (img) => {
+  const onImageLoaded = function (img) {
     imgRef.current = img;
   };
 
   // returns new extent from the crop area that the user made
-  const createNewExtent = () => {
+  const createNewExtent = function () {
     const imgWidth = imageToCrop.current.componentRef.clientWidth;
     const imgHeight = imageToCrop.current.componentRef.clientHeight;
     const rasterWidthGeo = extent[2] - extent[0];
@@ -62,7 +62,7 @@ export default function Crop(props) {
     return bottomLeft.concat(topRight);
   };
 
-  const handleCrop = () => {
+  const handleCrop = function () {
     const newExtent = createNewExtent();
     const newImg = getCroppedImg(imgRef.current, crop, "cropped");
     dispatch({
@@ -82,7 +82,6 @@ export default function Crop(props) {
         onChange={(newCrop) => setCrop(newCrop)}
         onImageLoaded={(img) => onImageLoaded(img)}
       />
-      {/* TODO: center button */}
       <Button
         variant="contained"
         startIcon={<Done />}

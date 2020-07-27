@@ -1,18 +1,19 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
-import { Provider } from 'react-redux';
-import store from './Store/store';
-import {SnackbarProvider } from 'notistack';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import * as serviceWorker from "./serviceWorker";
+import { Provider } from "react-redux";
+import store from "./Store/store";
+import { SnackbarProvider } from "notistack";
 
 ReactDOM.render(
-    <SnackbarProvider maxSnack={3}>
+  <SnackbarProvider maxSnack={3}>
     <Provider store={store}>
-        <App />
+      <App />
     </Provider>
-    </SnackbarProvider>
-    , document.getElementById('root'));
+  </SnackbarProvider>,
+  document.getElementById("root")
+);
 
 serviceWorker.unregister();

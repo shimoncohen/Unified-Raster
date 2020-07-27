@@ -23,7 +23,7 @@ let defaultState = {
   map: null,
 };
 
-export default (state = defaultState, action) => {
+export default function (state = defaultState, action) {
   switch (action.type) {
     // Fires when data arrived from server
     case "INIT_STORE":
@@ -31,6 +31,7 @@ export default (state = defaultState, action) => {
         const resources = action.payload;
         const groups = {};
         const items = {};
+
         // convert data from the server for open layers and react dnd
         resources.forEach((resource) => {
           prepareResourceForDisplay(resource);
@@ -163,12 +164,10 @@ export default (state = defaultState, action) => {
 
         prepareResourceForDisplay(resource);
         items[resource.name] = resource;
+
         addToGroups(groups, resource);
-
         setDraftData(draft, items, groups);
-
         addResourceToMap(state.map, resource);
-        // setDraftMap(draft);
       });
 
     case "REMOVE_RESOURCE":
@@ -194,4 +193,4 @@ export default (state = defaultState, action) => {
     default:
       return state;
   }
-};
+}

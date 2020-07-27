@@ -28,7 +28,7 @@
     "react-image-crop": "^8.6.4",
     "react-infinite-scroll-component": "^5.0.5",
     "react-redux": "^7.2.0",
-    "react-scripts": "3.4.0",
+    "react-scripts": "3.4.1",
     "redux": "^4.0.5",
     "styled-components": "^5.1.1"
   },
@@ -64,7 +64,6 @@
   "devDependencies": {
     "@commitlint/cli": "^9.1.1",
     "@commitlint/config-angular": "^9.1.1",
-    "eslint": "^7.5.0",
     "eslint-config-react-app": "^5.2.1",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-flowtype": "^4.7.0",

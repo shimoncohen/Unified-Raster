@@ -40,7 +40,7 @@ export default function Search(props) {
   //     search(searchText);
   // }, [searchText]);
 
-  const search = async () => {
+  const search = async function() {
     try {
       const results = await searchFunction(searchText);
       setSearchResults(results[model + "s"]);
