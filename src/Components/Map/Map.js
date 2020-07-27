@@ -1,48 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import MapConfig from "../../Config/mapConfig";
-import OlMap from "ol/Map";
-import OlView from "ol/View";
-import OlLayerTile from "ol/layer/Tile";
-import OlSourceOsm from "ol/source/OSM";
-import OlLayerGroup from "ol/layer/Group";
+import { useSelector, useDispatch } from "react-redux";
 import ProjectSelector from "../Group/Selector/ProjectSelector";
 import Groups from "../Group/Groups";
 import { Drawer, IconButton } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import { SimpleButton, MapComponent } from "@terrestris/react-geo";
-import { ADD_MAP } from "../../Store/Reducers/actionTypes";
+import { INITIALIZE_MAP } from "../../Store/Reducers/actionTypes";
 
 import "ol/ol.css";
 import "antd/dist/antd.css";
 import "./react-geo.css";
 
-const osm = new OlLayerTile({
-  source: new OlSourceOsm(),
-  name: "OSM",
-});
-
-const layerGroupOsm = new OlLayerGroup({
-  name: "OSM",
-  layers: [osm],
-});
-
-const map = new OlMap({
-  view: new OlView({
-    center: MapConfig.MAP_CENTER,
-    projection: MapConfig.DEFAULT_PROJECTION,
-    zoom: 5,
-  }),
-  layers: [layerGroupOsm],
-});
-
 function App() {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
+  const map = useSelector((state) => state.data.map);
 
   useEffect(() => {
-    dispatch({ type: ADD_MAP, payload: { map } });
-  }, [map]);
+    dispatch({ type: INITIALIZE_MAP });
+  }, []);
 
   const toggleDrawer = function () {
     setVisible(!visible);

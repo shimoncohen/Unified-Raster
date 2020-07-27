@@ -1,5 +1,8 @@
 import produce from "immer";
 import {
+  clearMap,
+  cropLayer,
+  getNewMap,
   getLayerByName,
   addHoverLayer,
   getHoverLayer,
@@ -7,8 +10,8 @@ import {
   setDraftMap,
   addResourceToMap,
   removeResourceFromMap,
+  addBaseLayer,
 } from "../../Util/mapUtil";
-import Static from "ol/source/ImageStatic";
 import {
   addToGroups,
   removeFromGroups,
@@ -18,7 +21,7 @@ import {
 import {
   INITIALIZE_STORE,
   UPDATE_STORE,
-  ADD_MAP,
+  INITIALIZE_MAP,
   TOGGLE_GROUP,
   TOGGLE_ITEM,
   SELECT_ITEM,
@@ -29,13 +32,13 @@ import {
   ADD_RESOURCE,
   REMOVE_RESOURCE,
 } from "./actionTypes";
-import { DEFAULT_PROJECTION } from "../../Config/mapConfig";
 
 let defaultState = {
   data: null,
   selected: null,
-  map: null,
+  map: getNewMap(),
 };
+addBaseLayer(defaultState.map);
 
 export default function (state = defaultState, action) {
   switch (action.type) {
@@ -65,9 +68,10 @@ export default function (state = defaultState, action) {
       });
 
     // Fires when map object is ready
-    case ADD_MAP:
+    case INITIALIZE_MAP:
       return produce(state, (draft) => {
-        draft.map = action.payload.map;
+        clearMap(draft.map);
+        addBaseLayer(draft.map);
       });
 
     //Fires when user click on group check
@@ -134,12 +138,20 @@ export default function (state = defaultState, action) {
           action.payload.newExtent;
         draft.data.items[action.payload.id].lastCrop = action.payload.crop;
         const layer = getLayerByName(state.map, action.payload.id);
-        const newSource = new Static({
-          url: action.payload.newUri,
-          projection: DEFAULT_PROJECTION,
-          imageExtent: action.payload.newExtent,
-        });
-        layer.setSource(newSource);
+        const hoverLayer = getLayerByName(
+          state.map,
+          action.payload.id + " hover"
+        );
+
+        cropLayer(layer, action.payload.newUri, action.payload.newExtent);
+        // Check if hover layer exists
+        if (hoverLayer) {
+          cropLayer(
+            hoverLayer,
+            action.payload.newUri,
+            action.payload.newExtent
+          );
+        }
       });
     }
 

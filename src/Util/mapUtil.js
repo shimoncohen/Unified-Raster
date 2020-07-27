@@ -1,9 +1,12 @@
+import OlMap from "ol/Map";
+import OlView from "ol/View";
 import OlLayerImage from "ol/layer/Image";
 import Static from "ol/source/ImageStatic";
 import OlLayerTile from "ol/layer/Tile";
 import OlSourceOsm from "ol/source/OSM";
 import OlLayerGroup from "ol/layer/Group";
 import MapConfig from "../Config/mapConfig";
+import { DEFAULT_PROJECTION } from "../Config/mapConfig";
 
 export function getLayerByName(map, name) {
   const mapLayers = map.getLayerGroup().getLayersArray();
@@ -46,6 +49,26 @@ export function setVisibleGroup(map, groupName, visibility) {
 
 export function clearMap(map) {
   map.getLayers().clear();
+}
+
+export function cropLayer(layer, newUri, newExtent) {
+  const newSource = new Static({
+    url: newUri,
+    projection: DEFAULT_PROJECTION,
+    imageExtent: newExtent,
+  });
+  layer.setSource(newSource);
+}
+
+export function getNewMap() {
+  return new OlMap({
+    view: new OlView({
+      center: MapConfig.MAP_CENTER,
+      projection: MapConfig.DEFAULT_PROJECTION,
+      zoom: MapConfig.DEFAULT_ZOOM,
+    }),
+    layers: [],
+  });
 }
 
 export function addBaseLayer(map) {
