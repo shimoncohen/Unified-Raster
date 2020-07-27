@@ -1,0 +1,12 @@
+{
+    "extends": "react-app",
+    "plugins": ["jsx-a11y"],
+    "env": {
+      "browser": true,
+      "es6": true
+    },
+    "parserOptions": {
+    },
+    "rules": {
+    }
+  }
