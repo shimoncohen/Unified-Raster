@@ -3,7 +3,7 @@ import Static from "ol/source/ImageStatic";
 import OlLayerTile from "ol/layer/Tile";
 import OlSourceOsm from "ol/source/OSM";
 import OlLayerGroup from "ol/layer/Group";
-import MapConfig from "./MapConfig";
+import MapConfig from "../Config/mapConfig";
 
 export function getLayerByName(map, name) {
   const mapLayers = map.getLayerGroup().getLayersArray();

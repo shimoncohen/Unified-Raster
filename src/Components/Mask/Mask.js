@@ -19,6 +19,7 @@ import {
 import "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
 import { useSnackbar } from "notistack";
+import { UPDATE_MASK } from "../../Store/Reducers/actionTypes";
 
 const useStyles = makeStyles({
   band: {
@@ -114,7 +115,7 @@ export default function Mask(props) {
 
   const updateMask = function () {
     dispatch({
-      type: "UPDATE_MASK",
+      type: UPDATE_MASK,
       payload: {
         name: props.item.name,
         feather,

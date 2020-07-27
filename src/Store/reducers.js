@@ -1,5 +1,5 @@
-import dataReducer from "./Reducers/data-reducer";
-import projectReducer from "./Reducers/ProjectReducer";
+import dataReducer from "./Reducers/dataReducer";
+import projectReducer from "./Reducers/projectReducer";
 
 export default {
   data: dataReducer,

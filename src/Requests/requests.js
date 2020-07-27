@@ -1,5 +1,5 @@
 import Axios from "axios";
-import Config from "./Config";
+import Config from "../Config/urls";
 
 export async function GetProjects(path) {
   const serachPath = path ? "?path=" + path : "";

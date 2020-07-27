@@ -1,5 +1,5 @@
-import { makeCoordinatesArrayFromString } from "../General/Logic";
-import Config from "../General/Config";
+import { makeCoordinatesArrayFromString } from "./logic";
+import Config from "../Config/urls";
 
 export function addToGroups(groups, resource) {
   if (!groups["level-" + resource.level]) {

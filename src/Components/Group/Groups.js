@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Group from "./Group";
 import { useSelector, useDispatch } from "react-redux";
-import { getLayerGroupByName } from "../Map/MapUtil";
+import { getLayerGroupByName } from "../../Util/mapUtil";
+import { UPDATE_STORE } from "../../Store/Reducers/actionTypes";
+import { CHOOSE_PROJECT } from "../../Constants/tooltips";
 
 export default React.memo(function Groups(props) {
   const dataFromStore = useSelector((state) => state.data.data);
@@ -106,7 +108,7 @@ export default React.memo(function Groups(props) {
     }
 
     setData(newData);
-    dispatch({ type: "UPDATE_STORE", payload: newData });
+    dispatch({ type: UPDATE_STORE, payload: newData });
   };
 
   return data ? (
@@ -118,6 +120,6 @@ export default React.memo(function Groups(props) {
       })}
     </DragDropContext>
   ) : (
-    "Choose project to start"
+    CHOOSE_PROJECT
   );
 });

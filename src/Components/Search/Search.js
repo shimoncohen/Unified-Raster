@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/core/styles";
 import { SearchProjects, SearchResources } from "../../General/Requests";
+import { RESOURCE } from "../../Constants/models";
 
 const useStyles = makeStyles({
   root: {
@@ -24,8 +25,7 @@ export default function Search(props) {
   // Wanted model for searching (resource / project)
   const model = props.model;
   // Set search function by given model
-  const searchFunction =
-    model === "resource" ? SearchResources : SearchProjects;
+  const searchFunction = model === RESOURCE ? SearchResources : SearchProjects;
 
   useEffect(() => {}, [searchResults]);
 
@@ -40,7 +40,7 @@ export default function Search(props) {
   //     search(searchText);
   // }, [searchText]);
 
-  const search = async function() {
+  const search = async function () {
     try {
       const results = await searchFunction(searchText);
       setSearchResults(results[model + "s"]);

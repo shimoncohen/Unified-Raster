@@ -5,6 +5,7 @@ import Slider from "@material-ui/core/Slider";
 import Typography from "@material-ui/core/Typography";
 import Tooltip from "@material-ui/core/Tooltip";
 import { useDispatch } from "react-redux";
+import { CHANGE_OPACITY } from "../../../Store/Reducers/actionTypes";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,7 +71,7 @@ export default function CustomizedSlider(props) {
     if (newValue !== opacity) {
       setOpacity(newValue);
       dispatch({
-        type: "OPACITY_CHANGE",
+        type: CHANGE_OPACITY,
         payload: { id: props.item.name, opacity: newValue },
       });
     }

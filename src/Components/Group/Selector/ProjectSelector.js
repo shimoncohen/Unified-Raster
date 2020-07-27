@@ -3,7 +3,7 @@ import { useSnackbar } from "notistack";
 import { PhotoLibrary, Save } from "@material-ui/icons/";
 import Tooltip from "@material-ui/core/Tooltip";
 import { useDispatch, useSelector } from "react-redux";
-import { GetProjects } from "../General/Requests";
+import { GetProjects } from "../../../Requests/requests";
 import { IconButton, Dialog, Button } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/core/styles";
 import TreeView from "@material-ui/lab/TreeView";
@@ -11,6 +11,8 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import TreeItem from "@material-ui/lab/TreeItem";
 import pathUtil from "path";
+import { CHANGE_PROJECT } from "../../../Store/Reducers/actionTypes";
+import { ERROR_CONTACTING_SERVER } from "../../../Constants/Messages/error";
 
 const useStyles = makeStyles({
   root: {
@@ -86,10 +88,9 @@ export default function ProjectSelector(props) {
         setProjects(newProjects);
       }
     } catch {
-      enqueueSnackbar(
-        "There is a problem in our server, please try again later",
-        { variant: "error" }
-      );
+      enqueueSnackbar(ERROR_CONTACTING_SERVER.message, {
+        variant: ERROR_CONTACTING_SERVER.variant,
+      });
     }
   };
 
@@ -108,7 +109,7 @@ export default function ProjectSelector(props) {
   };
 
   const handleSaveChanges = function () {
-    dispatch({ type: "CHANGE_PROJECT", payload: { projectName } });
+    dispatch({ type: CHANGE_PROJECT, payload: { projectName } });
     toggleDialog();
   };
 

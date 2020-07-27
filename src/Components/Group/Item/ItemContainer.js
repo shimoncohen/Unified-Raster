@@ -4,12 +4,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Draggable } from "react-beautiful-dnd";
 import Item from "./Item";
 
-// const Container = styled.div`
-//   padding: 8px;
-//   margin-bottom: 8px;
-//   background: white;
-// `;
-
 const useStyles = makeStyles({
   root: {
     padding: "8px",

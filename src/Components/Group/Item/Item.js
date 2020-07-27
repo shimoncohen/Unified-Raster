@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import {
   ExpansionPanel,
   ExpansionPanelSummary,
@@ -12,19 +13,26 @@ import {
 import { ExpandMore, Settings, ZoomIn } from "@material-ui/icons/";
 import { useSelector, useDispatch } from "react-redux";
 import OpacitySlider from "./OpacitySlider";
-import SettingsTabs from "../Tabs/SettingsTabs";
+import SettingsTabs from "../../Tabs/SettingsTabs";
+import {
+  TOGGLE_ITEM,
+  SELECT_ITEM,
+  ZOOM_TO_LAYER,
+} from "../../../Store/Reducers/actionTypes";
 
-const itemStyle = {
-  width: "100%",
-};
-
-const avatarStyle = {
-  display: "inline-table",
-  marginRight: "5px",
-  marginLeft: "-10px",
-};
+const useStyles = makeStyles({
+  avatar: {
+    display: "inline-table",
+    marginRight: "5px",
+    marginLeft: "-10px",
+  },
+  item: {
+    width: "100%",
+  },
+});
 
 export default React.memo(function Item(props) {
+  const classes = useStyles();
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const itemDetails = useSelector((state) => state.data.data.items[props.item]);
@@ -35,12 +43,12 @@ export default React.memo(function Item(props) {
   }, [itemDetails]);
 
   const handleCheckboxClick = function () {
-    dispatch({ type: "TOOGLE_ITEM", payload: { id: item.name } });
+    dispatch({ type: TOGGLE_ITEM, payload: { id: item.name } });
   };
 
   const handleSelectItem = function (e) {
     e.stopPropagation();
-    dispatch({ type: "SELECT_ITEM", payload: { id: item.name } });
+    dispatch({ type: SELECT_ITEM, payload: { id: item.name } });
   };
 
   const handleOpenDialog = function () {
@@ -52,7 +60,7 @@ export default React.memo(function Item(props) {
   };
 
   const handleZoomToLayer = function () {
-    dispatch({ type: "ZOOM_TO_LAYER", payload: { id: item.name } });
+    dispatch({ type: ZOOM_TO_LAYER, payload: { id: item.name } });
   };
 
   return (
@@ -71,7 +79,7 @@ export default React.memo(function Item(props) {
               aria-controls="additional-item-content"
               id={item.name + "-expansion-panel-summary"}
             >
-              <div style={itemStyle}>
+              <div className={classes.item}>
                 <FormControlLabel
                   aria-label="item-details"
                   onClick={(event) => event.stopPropagation()}
@@ -83,7 +91,11 @@ export default React.memo(function Item(props) {
                     />
                   }
                 />
-                <Avatar style={avatarStyle} variant="square" src={item.uri} />
+                <Avatar
+                  className={classes.avatar}
+                  variant="square"
+                  src={item.uri}
+                />
                 <Link className="rasterName" onClick={handleSelectItem}>
                   {item.name}
                 </Link>

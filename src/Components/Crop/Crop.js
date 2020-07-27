@@ -5,6 +5,8 @@ import Button from "@material-ui/core/Button";
 import Done from "@material-ui/icons/Done";
 import { useDispatch } from "react-redux";
 import { useSnackbar } from "notistack";
+import { CROP } from "../../Store/Reducers/actionTypes";
+import { CROP_UPDATED } from "../../Constants/Messages/info";
 
 // return a new cropped img from user's selection
 function getCroppedImg(image, crop) {
@@ -66,10 +68,10 @@ export default function Crop(props) {
     const newExtent = createNewExtent();
     const newImg = getCroppedImg(imgRef.current, crop, "cropped");
     dispatch({
-      type: "CROP_LAYER",
+      type: CROP,
       payload: { id: itemId, newUri: newImg, newExtent, crop },
     });
-    enqueueSnackbar("Crop updated successfully", { variant: "success" });
+    enqueueSnackbar(CROP_UPDATED.message, { variant: CROP_UPDATED.variant });
   };
 
   return (

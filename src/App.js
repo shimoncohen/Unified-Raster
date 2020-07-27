@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import Map from "./Map/Map";
+import Map from "./Components/Map/Map";
 import Axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
-import Config from "./General/Config";
+import Config from "./Config/urls";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { makeStyles } from "@material-ui/core/styles";
+import { INITIALIZE_STORE } from "./Store/Reducers/actionTypes";
+import { ERROR_CONTACTING_SERVER } from "./Constants/Messages/error";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -26,12 +28,11 @@ function App() {
     // Get layers from the server and update store.
     try {
       const res = await Axios.get(Config.urlGetProjectByName + projectName);
-      dispatch({ type: "INIT_STORE", payload: res.data.latest.resources });
+      dispatch({ type: INITIALIZE_STORE, payload: res.data.latest.resources });
     } catch {
-      enqueueSnackbar(
-        "There is a problem in our server, please try again later",
-        { variant: "error" }
-      );
+      enqueueSnackbar(ERROR_CONTACTING_SERVER.message, {
+        variant: ERROR_CONTACTING_SERVER.variant,
+      });
     }
     setLoading(false);
   };

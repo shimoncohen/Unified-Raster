@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import MapConfig from "./MapConfig";
+import MapConfig from "../../Config/mapConfig";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
 import OlLayerTile from "ol/layer/Tile";
 import OlSourceOsm from "ol/source/OSM";
 import OlLayerGroup from "ol/layer/Group";
-import ProjectSelector from "../List/ProjectSelector";
-import Groups from "../List/Groups";
+import ProjectSelector from "../Group/Selector/ProjectSelector";
+import Groups from "../Group/Groups";
 import { Drawer, IconButton } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import { SimpleButton, MapComponent } from "@terrestris/react-geo";
+import { ADD_MAP } from "../../Store/Reducers/actionTypes";
 
 import "ol/ol.css";
 import "antd/dist/antd.css";
@@ -40,7 +41,7 @@ function App() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    dispatch({ type: "ADD_MAP", payload: { map } });
+    dispatch({ type: ADD_MAP, payload: { map } });
   }, [map]);
 
   const toggleDrawer = function () {

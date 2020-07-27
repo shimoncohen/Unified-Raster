@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import Item from "./ItemContainer";
+import { makeStyles } from "@material-ui/core/styles";
+import Item from "../Group/Item/ItemContainer";
 import { Droppable } from "react-beautiful-dnd";
 
 import {
@@ -12,13 +12,17 @@ import {
 } from "@material-ui/core/";
 import { ExpandMore } from "@material-ui/icons/";
 import { useDispatch } from "react-redux";
+import { TOGGLE_GROUP } from "../../Store/Reducers/actionTypes";
 
-const Items = styled.div`
-  padding: 0px;
-  max-height: 500px;
-  width: 100%;
-  overflow: auto;
-`;
+const useStyles = makeStyles({
+  items: {
+    padding: "0px",
+    maxHeight: "500px",
+    width: "100%",
+    overflow: "auto",
+  },
+});
+
 const InnerList = React.memo(function list(props) {
   return props.items.map((item, index) => (
     <Item key={item} item={item} index={index} />
@@ -26,6 +30,7 @@ const InnerList = React.memo(function list(props) {
 });
 
 export default React.memo(function Group(props) {
+  const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const [items, setItems] = useState(null);
   const [hasMore, setHasMore] = useState(true);
@@ -33,7 +38,7 @@ export default React.memo(function Group(props) {
   const dispatch = useDispatch();
 
   const handleCheckboxClick = function () {
-    dispatch({ type: "TOOGLE_GROUP", payload: { id: props.group.id } });
+    dispatch({ type: TOGGLE_GROUP, payload: { id: props.group.id } });
   };
 
   useEffect(() => {
@@ -108,11 +113,15 @@ export default React.memo(function Group(props) {
         {expanded && (
           <Droppable droppableId={props.group.id}>
             {(provided) => (
-              <Items ref={provided.innerRef} {...provided.droppableProps}>
+              <div
+                className={classes.items}
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
                 <InnerList items={items} />
 
                 {provided.placeholder}
-              </Items>
+              </div>
             )}
           </Droppable>
         )}

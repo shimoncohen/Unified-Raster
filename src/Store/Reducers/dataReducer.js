@@ -4,19 +4,33 @@ import {
   addHoverLayer,
   getHoverLayer,
   setVisibleGroup,
-} from "../../Map/MapUtil";
+  setDraftMap,
+  addResourceToMap,
+  removeResourceFromMap,
+} from "../../Util/mapUtil";
 import Static from "ol/source/ImageStatic";
 import {
   addToGroups,
   removeFromGroups,
   prepareResourceForDisplay,
   setDraftData,
-} from "../../util/mapDataUtil";
+} from "../../Util/mapDataUtil";
 import {
-  setDraftMap,
-  addResourceToMap,
-  removeResourceFromMap,
-} from "../../Map/MapUtil";
+  INITIALIZE_STORE,
+  UPDATE_STORE,
+  ADD_MAP,
+  TOGGLE_GROUP,
+  TOGGLE_ITEM,
+  SELECT_ITEM,
+  CHANGE_OPACITY,
+  CROP,
+  ZOOM_TO_LAYER,
+  UPDATE_MASK,
+  ADD_RESOURCE,
+  REMOVE_RESOURCE,
+} from "./actionTypes";
+import { DEFAULT_PROJECTION } from "../../Config/mapConfig";
+
 let defaultState = {
   data: null,
   selected: null,
@@ -26,7 +40,7 @@ let defaultState = {
 export default function (state = defaultState, action) {
   switch (action.type) {
     // Fires when data arrived from server
-    case "INIT_STORE":
+    case INITIALIZE_STORE:
       return produce(state, (draft) => {
         const resources = action.payload;
         const groups = {};
@@ -45,20 +59,20 @@ export default function (state = defaultState, action) {
       });
 
     // Fires when a user changes the order of items
-    case "UPDATE_STORE":
+    case UPDATE_STORE:
       return produce(state, (draft) => {
         draft.data = action.payload;
       });
 
     // Fires when map object is ready
-    case "ADD_MAP":
+    case ADD_MAP:
       return produce(state, (draft) => {
         draft.map = action.payload.map;
       });
 
     //Fires when user click on group check
     // (toogle group visibility)
-    case "TOOGLE_GROUP":
+    case TOGGLE_GROUP:
       const groupChecked = !state.data.groups[action.payload.id].checked;
       setVisibleGroup(state.map, action.payload.id, groupChecked);
       return produce(state, (draft) => {
@@ -66,7 +80,7 @@ export default function (state = defaultState, action) {
       });
 
     // Fires when user select an item
-    case "SELECT_ITEM": {
+    case SELECT_ITEM: {
       return produce(state, (draft) => {
         const lastSelectedItemId = Object.keys(draft.data.items).find(
           (itemId) => {
@@ -87,7 +101,7 @@ export default function (state = defaultState, action) {
     }
 
     // Fires when user click on item check (make item visible or not)
-    case "TOOGLE_ITEM": {
+    case TOGGLE_ITEM: {
       const layer = getLayerByName(state.map, action.payload.id);
       const cheked = !layer.getVisible();
       layer.setVisible(cheked);
@@ -96,7 +110,7 @@ export default function (state = defaultState, action) {
       });
     }
 
-    case "OPACITY_CHANGE": {
+    case CHANGE_OPACITY: {
       const layer = getLayerByName(state.map, action.payload.id);
 
       layer.setOpacity(action.payload.opacity / 100);
@@ -113,7 +127,7 @@ export default function (state = defaultState, action) {
       });
     }
 
-    case "CROP_LAYER": {
+    case CROP: {
       return produce(state, (draft) => {
         draft.data.items[action.payload.id].newUri = action.payload.newUri;
         draft.data.items[action.payload.id].newExtent =
@@ -122,14 +136,14 @@ export default function (state = defaultState, action) {
         const layer = getLayerByName(state.map, action.payload.id);
         const newSource = new Static({
           url: action.payload.newUri,
-          projection: "EPSG:4326",
+          projection: DEFAULT_PROJECTION,
           imageExtent: action.payload.newExtent,
         });
         layer.setSource(newSource);
       });
     }
 
-    case "ZOOM_TO_LAYER": {
+    case ZOOM_TO_LAYER: {
       const layer = getLayerByName(state.map, action.payload.id);
       state.map
         .getView()
@@ -137,7 +151,7 @@ export default function (state = defaultState, action) {
       return state;
     }
 
-    case "UPDATE_MASK": {
+    case UPDATE_MASK: {
       return produce(state, (draft) => {
         draft.data.items[action.payload.name].mask.feather =
           action.payload.feather;
@@ -156,7 +170,7 @@ export default function (state = defaultState, action) {
       });
     }
 
-    case "ADD_RESOURCE":
+    case ADD_RESOURCE:
       return produce(state, (draft) => {
         const resource = action.payload;
         const groups = state.data["groups"];
@@ -170,7 +184,7 @@ export default function (state = defaultState, action) {
         addResourceToMap(state.map, resource);
       });
 
-    case "REMOVE_RESOURCE":
+    case REMOVE_RESOURCE:
       return produce(state, (draft) => {
         const resource = action.payload.item;
         const groups = draft.data["groups"];
